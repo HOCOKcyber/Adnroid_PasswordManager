@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">PasswordManager</string>
+
+
+    <string name="welcome">Вход</string>
+    <string name="password">Пароль</string>
+    <string name="forgot_password">Не помню пароль</string>
+    <string name="continue_text">Продолжить</string>
+    <string name="password_repeat">Повторите пароль</string>
+    <string name="create_password">Регистрация</string>
+
 </resources>

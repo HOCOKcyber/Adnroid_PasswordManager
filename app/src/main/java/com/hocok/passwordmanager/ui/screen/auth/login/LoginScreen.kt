@@ -27,13 +27,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hocok.passwordmanager.R
-import com.hocok.passwordmanager.ui.screen.auth.login.components.PasswordTextField
+import com.hocok.passwordmanager.ui.screen.auth.components.PasswordTextField
 import com.hocok.passwordmanager.ui.component.StyleButton
-import com.hocok.passwordmanager.ui.screen.auth.login.components.ShowLogo
+import com.hocok.passwordmanager.ui.screen.auth.components.AuthContent
+import com.hocok.passwordmanager.ui.screen.auth.components.ShowLogo
 import com.hocok.passwordmanager.ui.theme.PasswordManagerTheme
 
 @Composable
-fun LoginScreen(){
+fun LoginScreen(
+    toRegistration: () -> Unit,
+){
 
     val viewModel = viewModel<LoginViewModel>()
     val uiState = viewModel.uiState.collectAsState()
@@ -46,61 +49,36 @@ fun LoginScreen(){
         ShowLogo(
             modifier = Modifier.weight(1f).fillMaxSize()
         )
-        Box(
-            Modifier.weight(2f)
-                .fillMaxSize()
-                .clip(RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp))
-                .background(MaterialTheme.colorScheme.primaryContainer)
+        AuthContent(
+            firstTextFieldIsVisible = uiState.value.isVisible,
+            firstTextFieldOnVisibleChange = {viewModel.loginEvent(LoginEvent.ChangeVisible)},
+            firstTextFieldValue = uiState.value.password,
+            firstTextFieldOnValueChange = { viewModel.loginEvent(LoginEvent.ChangePassword(it))},
+            onContinueButton = {},
+            modifier = Modifier.weight(2f)
         ){
-            Column (
-                modifier = Modifier.fillMaxSize().padding(50.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = stringResource(R.string.welcome),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(Modifier.weight(1f))
-                PasswordTextField(
-                    value = uiState.value.password,
-                    onValueChange = {viewModel.loginEvent(LoginEvent.ChangePassword(it))},
-                    isVisible = uiState.value.isVisible,
-                    onVisibleChange = { viewModel.loginEvent(LoginEvent.ChangeVisible) },
-                    modifier = Modifier.padding(bottom = 10.dp)
-                )
-                Text(
-                    text = stringResource(R.string.forgot_password),
-                    textAlign = TextAlign.End,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier.fillMaxWidth()
-                        .clickable(
-                            interactionSource = interactionSource,
-                            indication = null) {
-                            /* TO REG */
-                        }
-                )
-                Spacer(Modifier.weight(1.5f))
-                StyleButton(
-                    onClick = {
-                        /* TO HOME */
-                    },
-                    textRes = R.string.continue_text
-                )
-            }
+            Text(
+                text = stringResource(R.string.forgot_password),
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.End,
+                modifier = Modifier.padding(top = 10.dp, end = 6.dp)
+                    .fillMaxWidth()
+                    .clickable(
+                        interactionSource = interactionSource,
+                        indication = null) {
+                        toRegistration()
+                    }
+            )
         }
-
     }
-
 }
 
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview(){
     PasswordManagerTheme {
-        LoginScreen()
+        LoginScreen(
+            toRegistration = {}
+        )
     }
 }

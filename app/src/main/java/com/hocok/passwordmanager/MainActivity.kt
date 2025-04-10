@@ -12,6 +12,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.hocok.passwordmanager.ui.screen.auth.login.LoginScreen
+import com.hocok.passwordmanager.ui.screen.auth.registration.RegistrationScreen
+import com.hocok.passwordmanager.ui.screen.navigation.NavigationScreen
 import com.hocok.passwordmanager.ui.theme.PasswordManagerTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,7 +23,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PasswordManagerTheme {
-
+                NavigationScreen()
             }
         }
     }

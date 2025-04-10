@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class LoginViewModel: ViewModel() {
-
     private val _uiState = MutableStateFlow(LoginState())
 
     val uiState = _uiState.asStateFlow()
@@ -21,7 +20,6 @@ class LoginViewModel: ViewModel() {
             is LoginEvent.ChangeVisible -> {
                 _uiState.value = _uiState.value.copy( isVisible = !uiState.value.isVisible )
             }
-            else -> {}
         }
     }
 }

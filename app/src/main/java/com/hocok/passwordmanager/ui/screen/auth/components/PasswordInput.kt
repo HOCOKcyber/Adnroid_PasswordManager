@@ -1,5 +1,6 @@
-package com.hocok.passwordmanager.ui.screen.auth.login.components
+package com.hocok.passwordmanager.ui.screen.auth.components
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -15,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hocok.passwordmanager.R
@@ -26,7 +28,8 @@ fun PasswordTextField(
     onValueChange: (String) -> Unit,
     onVisibleChange: () -> Unit,
     isVisible: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    @StringRes text: Int = R.string.password,
 ){
     OutlinedTextField(
         value = value,
@@ -34,8 +37,9 @@ fun PasswordTextField(
         textStyle = MaterialTheme.typography.bodySmall,
         placeholder = {
             Text(
-                text = stringResource(R.string.password),
-                style = MaterialTheme.typography.bodySmall
+                text = stringResource(text),
+                style = MaterialTheme.typography.bodySmall,
+                overflow = TextOverflow.Ellipsis,
             )
         },
         trailingIcon = {
@@ -69,7 +73,8 @@ fun PasswordTextFieldPreview(){
             isVisible = false,
             value = "",
             onValueChange = {},
-            onVisibleChange = {}
+            onVisibleChange = {},
+            text = R.string.password
         )
     }
 }

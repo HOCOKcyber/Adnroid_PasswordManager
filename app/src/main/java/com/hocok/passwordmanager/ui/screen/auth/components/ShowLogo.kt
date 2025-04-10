@@ -1,4 +1,4 @@
-package com.hocok.passwordmanager.ui.screen.auth.login.components
+package com.hocok.passwordmanager.ui.screen.auth.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box

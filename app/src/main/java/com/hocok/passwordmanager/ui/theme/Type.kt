@@ -16,6 +16,11 @@ val monstserrat = FontFamily(
 
 // Set of Material typography styles to start with
 val Typography = Typography(
+    titleMedium = TextStyle(
+        fontFamily = monstserrat,
+        fontWeight = FontWeight.Bold,
+        fontSize = 40.sp,
+    ),
     bodySmall = TextStyle(
         fontFamily = monstserrat,
         fontWeight = FontWeight.Light,
@@ -24,11 +29,12 @@ val Typography = Typography(
     bodyMedium = TextStyle(
         fontFamily = monstserrat,
         fontWeight = FontWeight.Medium,
-        fontSize = 18.sp,
+        fontSize = 22.sp,
     ),
     bodyLarge = TextStyle(
         fontFamily = monstserrat,
         fontWeight = FontWeight.Bold,
         fontSize = 24.sp,
-    )
+    ),
+
 )
