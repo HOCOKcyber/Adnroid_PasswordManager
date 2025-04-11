@@ -14,7 +14,7 @@ val monstserrat = FontFamily(
     Font(R.font.montserrat_bold, weight = FontWeight.Bold),
 )
 
-// Set of Material typography styles to start with
+
 val Typography = Typography(
     titleMedium = TextStyle(
         fontFamily = monstserrat,

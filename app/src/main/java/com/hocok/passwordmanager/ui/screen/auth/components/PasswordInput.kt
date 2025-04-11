@@ -9,8 +9,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -29,6 +32,7 @@ fun PasswordTextField(
     onVisibleChange: () -> Unit,
     isVisible: Boolean,
     modifier: Modifier = Modifier,
+    errorMessage: String = "",
     @StringRes text: Int = R.string.password,
 ){
     OutlinedTextField(
@@ -37,9 +41,10 @@ fun PasswordTextField(
         textStyle = MaterialTheme.typography.bodySmall,
         placeholder = {
             Text(
-                text = stringResource(text),
+                text = errorMessage.ifEmpty { stringResource(text) },
                 style = MaterialTheme.typography.bodySmall,
-                overflow = TextOverflow.Ellipsis,
+                color = if (errorMessage.isNotEmpty()) MaterialTheme.colorScheme.onErrorContainer
+                        else MaterialTheme.colorScheme.onSecondaryContainer
             )
         },
         trailingIcon = {
@@ -60,7 +65,8 @@ fun PasswordTextField(
             keyboardType = KeyboardType.Password
         ),
         shape = RoundedCornerShape(20.dp),
-        modifier = modifier
+        modifier = modifier,
+        isError = errorMessage.isNotEmpty(),
     )
 
 }
@@ -74,7 +80,8 @@ fun PasswordTextFieldPreview(){
             value = "",
             onValueChange = {},
             onVisibleChange = {},
-            text = R.string.password
+            text = R.string.password,
+            errorMessage = ""
         )
     }
 }

@@ -1,6 +1,7 @@
 package com.hocok.passwordmanager.ui.screen.navigation
 
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -23,15 +24,23 @@ fun NavigationScreen(){
         ) {
             composable<Routes.Login> {
                 LoginScreen(
-                    toRegistration = { navController.navigate(Routes.Registration) }
+                    toRegistration = { navController.navigate(Routes.Registration) },
+                    toHome = { navController.navigate(Routes.Home) }
                 )
             }
 
             composable<Routes.Registration> {
-                RegistrationScreen()
+                RegistrationScreen(
+                    toHome = { navController.navigate(Routes.Home) }
+                )
+            }
+
+            composable<Routes.Home> {
+                Text(
+                    text = "COOL"
+                )
             }
         }
-
 
     }
 }

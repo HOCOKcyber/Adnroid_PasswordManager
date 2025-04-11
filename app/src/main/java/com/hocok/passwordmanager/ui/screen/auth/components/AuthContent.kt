@@ -20,14 +20,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.hocok.passwordmanager.R
 import com.hocok.passwordmanager.ui.component.StyleButton
-import com.hocok.passwordmanager.ui.screen.auth.login.LoginEvent
 
 @Composable
 fun AuthContent(
-    firstTextFieldValue: String,
-    firstTextFieldOnValueChange: (String) -> Unit,
-    firstTextFieldIsVisible: Boolean,
-    firstTextFieldOnVisibleChange: () -> Unit,
     onContinueButton: () -> Unit,
     modifier: Modifier = Modifier,
     @StringRes title: Int = R.string.welcome,
@@ -51,15 +46,9 @@ fun AuthContent(
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(Modifier.weight(1f))
-            PasswordTextField(
-                value = firstTextFieldValue,
-                onValueChange = {firstTextFieldOnValueChange(it)},
-                isVisible = firstTextFieldIsVisible,
-                onVisibleChange = { firstTextFieldOnVisibleChange() },
-            )
 
-//            HERE TEXT IF LOGIN AND
-//            ONE MORE PasswordTextField IF REG
+//            HERE LOGIN CONTENT
+//            OR REG CONTETN
             content()
 
 

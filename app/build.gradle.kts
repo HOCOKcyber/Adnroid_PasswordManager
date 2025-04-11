@@ -77,4 +77,8 @@ dependencies {
     val nav_version = "2.8.9"
     implementation("androidx.navigation:navigation-compose:$nav_version")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+
+    // DataStore
+    implementation("androidx.datastore:datastore-preferences:1.1.4")
+
 }
