@@ -9,4 +9,7 @@
     <string name="password_repeat">Повторите пароль</string>
     <string name="create_password">Регистрация</string>
 
+    <string name="copy">Копировать</string>
+    <string name="home">Главная</string>
+    <string name="search">Поиск</string>
 </resources>

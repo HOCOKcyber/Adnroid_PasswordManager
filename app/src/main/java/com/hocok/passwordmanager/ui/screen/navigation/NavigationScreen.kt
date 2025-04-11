@@ -1,22 +1,45 @@
 package com.hocok.passwordmanager.ui.screen.navigation
 
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.hocok.passwordmanager.domain.model.ExampleData
 import com.hocok.passwordmanager.ui.screen.auth.login.LoginScreen
 import com.hocok.passwordmanager.ui.screen.auth.registration.RegistrationScreen
+import com.hocok.passwordmanager.ui.screen.home.HomeScreenContent
+import com.hocok.passwordmanager.ui.theme.PasswordManagerTheme
 
 @Composable
 fun NavigationScreen(){
 
-    Scaffold {
-        innerPadding ->
-        val pad = innerPadding
+    val navController = rememberNavController()
 
-        val navController = rememberNavController()
+    Scaffold(
+        bottomBar = {
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentDestination = navBackStackEntry?.destination
+
+            if (navigationList.any{ currentDestination?.hasRoute(it.route::class) == true })
+            NavigationBottomBar(
+                currentDestination = currentDestination,
+                onClick = { navController.navigate(it) }
+            )
+        }
+    ) {
+        innerPadding ->
 
         NavHost(
             startDestination = Routes.Login,
@@ -36,8 +59,15 @@ fun NavigationScreen(){
             }
 
             composable<Routes.Home> {
+                HomeScreenContent(
+                    accountList = ExampleData.accountList,
+                    modifier = Modifier.padding(innerPadding)
+                )
+            }
+
+            composable<Routes.Search> {
                 Text(
-                    text = "COOL"
+                    text = "SEARCH PAGE"
                 )
             }
         }
@@ -45,3 +75,33 @@ fun NavigationScreen(){
     }
 }
 
+
+@Composable
+fun NavigationBottomBar(
+    currentDestination: NavDestination?,
+    onClick: (Routes) -> Unit,
+){
+    BottomNavigation{
+        navigationList.forEach { navigationRoute ->
+            BottomNavigationItem(
+                icon = {
+                    Icon(imageVector = navigationRoute.icon, contentDescription = navigationRoute.name)
+                },
+                selected = currentDestination?.hasRoute(navigationRoute.route::class) == true,
+                onClick = { onClick(navigationRoute.route)}
+            )
+        }
+    }
+}
+
+
+@Preview
+@Composable
+fun NavigationBottomBarPreview(){
+    PasswordManagerTheme {
+        NavigationBottomBar(
+            onClick = {},
+            currentDestination = null
+        )
+    }
+}

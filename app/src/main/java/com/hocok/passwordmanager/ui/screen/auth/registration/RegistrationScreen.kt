@@ -14,7 +14,6 @@ import com.hocok.passwordmanager.R
 import com.hocok.passwordmanager.ui.screen.auth.components.AuthContent
 import com.hocok.passwordmanager.ui.screen.auth.components.PasswordTextField
 import com.hocok.passwordmanager.ui.screen.auth.components.ShowLogo
-import com.hocok.passwordmanager.ui.screen.navigation.Routes
 import com.hocok.passwordmanager.ui.theme.PasswordManagerTheme
 
 @Composable
