@@ -19,6 +19,9 @@ sealed class Routes{
 
     @Serializable
     data object Search: Routes()
+
+    @Serializable
+    data object Create: Routes()
 }
 
 data class BottomNavigationRoute(

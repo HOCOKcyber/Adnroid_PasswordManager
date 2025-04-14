@@ -1,14 +1,18 @@
 package com.hocok.passwordmanager.ui.screen.navigation
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.FloatingActionButtonElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
@@ -19,6 +23,7 @@ import androidx.navigation.compose.rememberNavController
 import com.hocok.passwordmanager.domain.model.ExampleData
 import com.hocok.passwordmanager.ui.screen.auth.login.LoginScreen
 import com.hocok.passwordmanager.ui.screen.auth.registration.RegistrationScreen
+import com.hocok.passwordmanager.ui.screen.create.CreateScreen
 import com.hocok.passwordmanager.ui.screen.home.HomeScreenContent
 import com.hocok.passwordmanager.ui.theme.PasswordManagerTheme
 
@@ -36,6 +41,11 @@ fun NavigationScreen(){
             NavigationBottomBar(
                 currentDestination = currentDestination,
                 onClick = { navController.navigate(it) }
+            )
+        },
+        floatingActionButton = {
+            PasswordManagerFloatingActionButton(
+                onClick = { navController.navigate(Routes.Create) }
             )
         }
     ) {
@@ -70,11 +80,16 @@ fun NavigationScreen(){
                     text = "SEARCH PAGE"
                 )
             }
+
+            composable<Routes.Create> {
+                CreateScreen(
+                    paddingValue = innerPadding
+                )
+            }
         }
 
     }
 }
-
 
 @Composable
 fun NavigationBottomBar(
@@ -85,7 +100,10 @@ fun NavigationBottomBar(
         navigationList.forEach { navigationRoute ->
             BottomNavigationItem(
                 icon = {
-                    Icon(imageVector = navigationRoute.icon, contentDescription = navigationRoute.name)
+                    Icon(imageVector = navigationRoute.icon,
+                        contentDescription = navigationRoute.name,
+                        tint = Color.White
+                    )
                 },
                 selected = currentDestination?.hasRoute(navigationRoute.route::class) == true,
                 onClick = { onClick(navigationRoute.route)}
@@ -94,6 +112,20 @@ fun NavigationBottomBar(
     }
 }
 
+@Composable
+fun PasswordManagerFloatingActionButton(
+    onClick: () -> Unit
+){
+    Box(
+        modifier = Modifier.clickable {
+            onClick()
+        }
+    ){
+        Text(
+            text = "+"
+        )
+    }
+}
 
 @Preview
 @Composable

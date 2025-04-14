@@ -17,11 +17,12 @@ import androidx.compose.ui.unit.dp
 fun StyleButton(
     onClick:() -> Unit,
     @StringRes textRes: Int,
+    modifier: Modifier = Modifier
 ){
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(20.dp),
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
         Box(
             modifier = Modifier.padding(horizontal = 15.dp, vertical = 5.dp)

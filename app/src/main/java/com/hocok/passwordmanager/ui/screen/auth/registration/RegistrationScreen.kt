@@ -27,7 +27,7 @@ fun RegistrationScreen(
         uiState = uiState,
         onSubmit = { viewModel.onEvent(RegistrationEvent.Submit(toHome)) },
         onFirstValueChange = {viewModel.onEvent(RegistrationEvent.PasswordChange(it))},
-        onFirstVisibleChange = {viewModel.onEvent(RegistrationEvent.RepeatVisibleChange)},
+        onFirstVisibleChange = {viewModel.onEvent(RegistrationEvent.VisibleChange)},
         onRepeatValueChange = {viewModel.onEvent(RegistrationEvent.RepeatPasswordChange(it))},
         onRepeatVisibleChange = {viewModel.onEvent(RegistrationEvent.RepeatVisibleChange)}
     )

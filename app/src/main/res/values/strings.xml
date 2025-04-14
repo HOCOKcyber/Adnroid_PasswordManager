@@ -12,4 +12,18 @@
     <string name="copy">Копировать</string>
     <string name="home">Главная</string>
     <string name="search">Поиск</string>
+
+    <string name="service">Сервис</string>
+    <string name="service_placeholder">Название сервиса</string>
+    <string name="login">Логин</string>
+    <string name="login_placeholder">Введите логин</string>
+    <string name="domain">Домен</string>
+    <string name="domain_placeholder">Ссылка на сервис/сайт</string>
+
+    <string name="password_placeholder">Введите пароль</string>
+    <string name="lenght">Длина</string>
+    <string name="numbers">Цифры</string>
+    <string name="symbols">Символы</string>
+    <string name="upper_letters">Заглавные буквы</string>
+    <string name="save">Сохранить</string>
 </resources>
