@@ -41,7 +41,7 @@ import com.hocok.passwordmanager.ui.theme.PasswordManagerTheme
 
 @Composable
 fun CreateScreen(
-    paddingValue: PaddingValues
+    modifier: Modifier = Modifier
 ){
     val viewModel: CreateViewModel = viewModel<CreateViewModel>()
     val uiState by viewModel.uiState.collectAsState()
@@ -59,7 +59,7 @@ fun CreateScreen(
         onSliderChange = {viewModel.onEvent(CreateEvent.ChangeSlider(it))},
         generatePassword = {viewModel.onEvent(CreateEvent.GeneratePassword)},
         checkLength = {viewModel.onEvent(CreateEvent.CheckLength)},
-        modifier = Modifier.padding(paddingValue).padding(horizontal = 10.dp)
+        modifier = modifier.padding(horizontal = 10.dp)
     )
 }
 

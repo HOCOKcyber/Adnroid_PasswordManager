@@ -20,10 +20,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.hocok.passwordmanager.domain.model.AccountData
 import com.hocok.passwordmanager.domain.model.ExampleData
 import com.hocok.passwordmanager.ui.screen.auth.login.LoginScreen
 import com.hocok.passwordmanager.ui.screen.auth.registration.RegistrationScreen
 import com.hocok.passwordmanager.ui.screen.create.CreateScreen
+import com.hocok.passwordmanager.ui.screen.details.DetailsContent
 import com.hocok.passwordmanager.ui.screen.home.HomeScreenContent
 import com.hocok.passwordmanager.ui.theme.PasswordManagerTheme
 
@@ -71,7 +73,8 @@ fun NavigationScreen(){
             composable<Routes.Home> {
                 HomeScreenContent(
                     accountList = ExampleData.accountList,
-                    modifier = Modifier.padding(innerPadding)
+                    modifier = Modifier.padding(innerPadding),
+                    toDetails = {navController.navigate(Routes.Details)}
                 )
             }
 
@@ -83,7 +86,14 @@ fun NavigationScreen(){
 
             composable<Routes.Create> {
                 CreateScreen(
-                    paddingValue = innerPadding
+                    modifier = Modifier.padding(innerPadding)
+                )
+            }
+
+            composable<Routes.Details> {
+                DetailsContent(
+                    account = AccountData(),
+                    modifier = Modifier.padding(innerPadding)
                 )
             }
         }

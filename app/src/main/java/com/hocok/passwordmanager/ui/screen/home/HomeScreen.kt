@@ -1,6 +1,7 @@
 package com.hocok.passwordmanager.ui.screen.home
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,6 +33,7 @@ import coil3.request.crossfade
 import com.hocok.passwordmanager.R
 import com.hocok.passwordmanager.domain.model.AccountData
 import com.hocok.passwordmanager.domain.model.ExampleData
+import com.hocok.passwordmanager.ui.component.AccountPreview
 import com.hocok.passwordmanager.ui.theme.PasswordManagerTheme
 
 @Composable
@@ -42,15 +44,17 @@ fun HomeScreen(){
 @Composable
 fun HomeScreenContent(
     accountList: List<AccountData>,
+    toDetails: () -> Unit,
     modifier: Modifier = Modifier
 ){
     LazyColumn(
         modifier = modifier
     ) {
         items(accountList){
-            AccountCard(
+            HomeAccountCard(
                 account = it,
-                modifier = Modifier.fillMaxSize().padding(bottom = 10.dp)
+                modifier = Modifier.fillMaxSize().padding(bottom = 10.dp),
+                toDetails = toDetails
             )
         }
 
@@ -58,42 +62,19 @@ fun HomeScreenContent(
 }
 
 @Composable
-fun AccountCard(
+fun HomeAccountCard(
     account: AccountData,
+    toDetails: () -> Unit,
     modifier: Modifier = Modifier
 ){
     Card(
-        modifier = modifier
+        modifier = modifier.clickable { toDetails() }
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp).fillMaxWidth(),
         ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data("https://www.google.com/s2/favicons?domain=${account.domain}&sz=${256}")
-                    .crossfade(true)
-                    .build(),
-                contentDescription = null,
-                error = painterResource(R.drawable.error_image),
-                onError = { Log.d("Image Error", it.toString())},
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.padding(end = 20.dp)
-                    .size(55.dp)
-                    .clip(CircleShape),
-
-            )
-            Column {
-                Text(
-                    text = account.service,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-                Text(
-                    text = account.login,
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
+            AccountPreview(account = account)
             Spacer(Modifier.weight(1f))
             IconButton(
                 onClick = {
@@ -118,7 +99,8 @@ fun AccountCard(
 fun HomeScreenContentPreview(){
     PasswordManagerTheme {
         HomeScreenContent(
-            accountList = ExampleData.accountList
+            accountList = ExampleData.accountList,
+            toDetails = {}
         )
     }
 }

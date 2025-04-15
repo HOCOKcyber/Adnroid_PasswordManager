@@ -26,4 +26,8 @@
     <string name="symbols">Символы</string>
     <string name="upper_letters">Заглавные буквы</string>
     <string name="save">Сохранить</string>
+
+    <string name="details">Подробности</string>
+    <string name="change">Изменить</string>
+    <string name="share">Поделиться</string>
 </resources>
