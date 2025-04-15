@@ -1,21 +1,16 @@
 package com.hocok.passwordmanager.ui.screen.auth.login
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.hocok.passwordmanager.PasswordManagerApp
+import com.hocok.passwordmanager.domain.model.PasswordManagerUtils
 import com.hocok.passwordmanager.domain.repository.DataStoreRepository
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 
 class LoginViewModel(
     val dataStoreRep: DataStoreRepository
@@ -24,13 +19,6 @@ class LoginViewModel(
 
     val uiState = _uiState.asStateFlow()
 
-    private val userPassword : StateFlow<String> = dataStoreRep.userPassword.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = runBlocking {
-            dataStoreRep.userPassword.first()
-        }
-    )
 
     fun onEvent(event: LoginEvent){
         when(event){
@@ -41,10 +29,13 @@ class LoginViewModel(
                 _uiState.value = _uiState.value.copy( isVisible = !uiState.value.isVisible )
             }
             is LoginEvent.Submit -> {
-                if (_uiState.value.password == userPassword.value) event.onSubmit()
-                else _uiState.value = _uiState.value.copy(password = "", passwordError = "Неверный пароль")
+                viewModelScope.launch {
+                    val correctPassword = dataStoreRep.read()
+                    val userCryptoPassword = PasswordManagerUtils.crypto(_uiState.value.password, PasswordManagerUtils.SHIFT)
 
-                Log.d("Login",userPassword.value)
+                    if (userCryptoPassword == correctPassword) event.onSubmit()
+                    else _uiState.value = _uiState.value.copy(password = "", passwordError = "Неверный пароль")
+                }
             }
         }
     }

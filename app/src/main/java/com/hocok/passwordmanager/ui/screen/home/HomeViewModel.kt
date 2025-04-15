@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.hocok.passwordmanager.PasswordManagerApp
-import com.hocok.passwordmanager.data.db.AccountDao
 import com.hocok.passwordmanager.domain.model.AccountData
 import com.hocok.passwordmanager.domain.repository.AccountRepository
 import kotlinx.coroutines.flow.SharingStarted

@@ -18,6 +18,6 @@ object ExampleData{
         AccountData(null, "login1", "vk", "vk.com", "vkPassword"),
         AccountData(null, "login2", "steam", "steampowered.com", "steamPassword"),
         AccountData(null, "login3", "github", "github.com", "githubPassword"),
-        AccountData(null, "login4", "gmail", "google.com", "gmailPassword")
+        AccountData(null, "veeeeeeeeeeeryLonoooooooogLogin", "gmail", "google.com", "gmailPassword")
     )
 }

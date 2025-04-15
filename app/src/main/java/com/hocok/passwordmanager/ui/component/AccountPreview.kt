@@ -47,7 +47,7 @@ fun AccountPreview(
             modifier = Modifier.padding(end = 20.dp)
                 .size(imageSize.dp)
                 .clip(CircleShape),
-            )
+        )
         Column {
             Text(
                 text = account.service,
@@ -66,12 +66,14 @@ fun AccountPreview(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun AccountPreviewPreview(){
     PasswordManagerTheme {
         AccountPreview(
-            account = AccountData()
+            account = AccountData(
+                login = "mqwkpednqeodqedjeqjdjkqjedkjewqidjqed;k"
+            )
         )
     }
 }

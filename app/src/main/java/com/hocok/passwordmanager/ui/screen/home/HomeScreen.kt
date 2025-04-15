@@ -1,48 +1,49 @@
 package com.hocok.passwordmanager.ui.screen.home
 
-import android.util.Log
+import android.content.ClipData
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import com.hocok.passwordmanager.R
 import com.hocok.passwordmanager.domain.model.AccountData
 import com.hocok.passwordmanager.domain.model.ExampleData
 import com.hocok.passwordmanager.ui.component.AccountPreview
 import com.hocok.passwordmanager.ui.theme.PasswordManagerTheme
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun HomeScreen(
     toDetails: (id: Int) -> Unit,
     modifier: Modifier = Modifier,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedTransitionScope: SharedTransitionScope,
 ){
     val viewModel: HomeViewModel = viewModel(factory = HomeViewModel.factory)
     val accountList by viewModel.accountList.collectAsState()
@@ -50,15 +51,22 @@ fun HomeScreen(
         accountList = accountList,
         toDetails = toDetails,
         modifier = modifier,
+
+        animatedVisibilityScope = animatedVisibilityScope,
+        sharedTransitionScope = sharedTransitionScope
     )
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun HomeScreenContent(
     accountList: List<AccountData>,
     toDetails: (id: Int) -> Unit,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedTransitionScope: SharedTransitionScope,
     modifier: Modifier = Modifier
 ){
+    val clipboardManager = LocalClipboardManager.current
     LazyColumn(
         modifier = modifier
     ) {
@@ -66,16 +74,27 @@ fun HomeScreenContent(
             HomeAccountCard(
                 account = account,
                 modifier = Modifier.fillMaxSize().padding(bottom = 10.dp),
-                toDetails = { toDetails(account.id!!) }
+                toDetails = { toDetails(account.id!!) },
+                animatedVisibilityScope = animatedVisibilityScope,
+                sharedTransitionScope = sharedTransitionScope,
+                onCopy = {
+                    val clipData = ClipData.newPlainText("password", account.password)
+                    val clipEntry = ClipEntry(clipData)
+                    clipboardManager.setClip(clipEntry)
+                }
             )
         }
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun HomeAccountCard(
     account: AccountData,
     toDetails: () -> Unit,
+    onCopy: () -> Unit,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedTransitionScope: SharedTransitionScope,
     modifier: Modifier = Modifier
 ){
     Card(
@@ -85,12 +104,18 @@ fun HomeAccountCard(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp).fillMaxWidth(),
         ) {
-            AccountPreview(account = account)
-            Spacer(Modifier.weight(1f))
+            with(sharedTransitionScope){
+                AccountPreview(
+                    account = account,
+                    modifier = Modifier.weight(1f).sharedElement(
+                        rememberSharedContentState(key = account.id.toString()),
+                        animatedVisibilityScope = animatedVisibilityScope
+                    )
+                )
+            }
+            Spacer(Modifier.width(10.dp))
             IconButton(
-                onClick = {
-//                    COPY
-                },
+                onClick = onCopy,
                 modifier = Modifier.size(30.dp)
             ) {
                 Icon(
@@ -102,6 +127,7 @@ fun HomeAccountCard(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Preview(
     showBackground = true,
     showSystemUi = true
@@ -109,9 +135,13 @@ fun HomeAccountCard(
 @Composable
 fun HomeScreenContentPreview(){
     PasswordManagerTheme {
+        SharedTransitionLayout {
+        AnimatedVisibility(true) {
         HomeScreenContent(
             accountList = ExampleData.accountList,
-            toDetails = {}
-        )
+            toDetails = {},
+            sharedTransitionScope = this@SharedTransitionLayout,
+            animatedVisibilityScope = this,
+        )}}
     }
 }

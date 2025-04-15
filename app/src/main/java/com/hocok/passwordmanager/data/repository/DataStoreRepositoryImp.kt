@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.hocok.passwordmanager.domain.model.PasswordManagerUtils
 import com.hocok.passwordmanager.domain.repository.DataStoreRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -31,8 +32,12 @@ class DataStoreRepositoryImp(
 
     override suspend fun savePassword(newPassword: String) {
         dataStore.edit { preference ->
-            preference[PASSWORD] = newPassword
+            preference[PASSWORD] = PasswordManagerUtils.crypto(newPassword, PasswordManagerUtils.SHIFT)
         }
+    }
+
+    override suspend fun read(): String {
+        return userPassword.first()
     }
 
     companion object{

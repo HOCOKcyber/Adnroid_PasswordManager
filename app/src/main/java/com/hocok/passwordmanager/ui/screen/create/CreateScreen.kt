@@ -5,7 +5,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -118,7 +117,7 @@ fun CreateContent(
             onValueChange = onDomainChange,
             placeholder = stringResource(R.string.domain_placeholder),
             iconId = R.drawable.link_image,
-            modifier = Modifier.padding(bottom = 30.dp)
+            modifier = Modifier.padding(bottom = 20.dp)
         )
         AccountDataInputSection(
             name = stringResource(R.string.password),

@@ -30,4 +30,10 @@
     <string name="details">Подробности</string>
     <string name="change">Изменить</string>
     <string name="share">Поделиться</string>
+
+    <string name="back">Назад</string>
+    <string name="delete">Удалить</string>
+    <string name="add_password">Добавить аккаунт</string>
+    <string name="change_password">Изменить аккаунт</string>
+
 </resources>

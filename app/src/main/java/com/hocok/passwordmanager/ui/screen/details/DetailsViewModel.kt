@@ -8,7 +8,6 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.hocok.passwordmanager.PasswordManagerApp
 import com.hocok.passwordmanager.domain.model.AccountData
 import com.hocok.passwordmanager.domain.repository.AccountRepository
-import com.hocok.passwordmanager.ui.screen.home.HomeViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -24,6 +23,12 @@ class DetailsViewModel(
     fun fetchAccount(id: Int){
         viewModelScope.launch {
             _uiState.update { accountRepository.getAccountById(id) }
+        }
+    }
+
+    fun deleteAccount(id: Int){
+        viewModelScope.launch {
+            accountRepository.deleteAccount(id)
         }
     }
 

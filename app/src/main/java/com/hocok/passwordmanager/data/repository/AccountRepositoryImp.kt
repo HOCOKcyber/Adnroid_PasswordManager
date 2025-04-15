@@ -2,6 +2,7 @@ package com.hocok.passwordmanager.data.repository
 
 import com.hocok.passwordmanager.data.db.AccountDao
 import com.hocok.passwordmanager.domain.model.AccountData
+import com.hocok.passwordmanager.domain.model.PasswordManagerUtils
 import com.hocok.passwordmanager.domain.repository.AccountRepository
 import kotlinx.coroutines.flow.Flow
 
@@ -13,15 +14,21 @@ class AccountRepositoryImp(
     }
 
     override suspend fun getAccountById(id: Int): AccountData {
-        return accountDao.getAccountById(id)
+        val cryptoAccount = accountDao.getAccountById(id)
+        return cryptoAccount.copy(
+            password = PasswordManagerUtils.crypto(cryptoAccount.password, -PasswordManagerUtils.SHIFT)
+        )
     }
 
     override suspend fun saveAccount(account: AccountData) {
-        return accountDao.saveAccount(account)
+        val cryptoAccount = account.copy(
+            password = PasswordManagerUtils.crypto(account.password, PasswordManagerUtils.SHIFT)
+        )
+        return accountDao.saveAccount(cryptoAccount)
     }
 
-    override suspend fun deleteAccount(account: AccountData) {
-        TODO("Not yet implemented")
+    override suspend fun deleteAccount(id: Int) {
+        accountDao.deleteAccount(id)
     }
 
 }

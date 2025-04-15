@@ -1,7 +1,6 @@
 package com.hocok.passwordmanager.data.db
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -20,6 +19,6 @@ interface AccountDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveAccount(account: AccountData)
 
-    @Delete
-    suspend fun deleteAccount(account: AccountData)
+    @Query("DELETE FROM AccountData where id = :id")
+    suspend fun deleteAccount(id: Int)
 }

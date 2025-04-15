@@ -11,5 +11,5 @@ interface AccountRepository {
 
     suspend fun saveAccount(account: AccountData)
 
-    suspend fun deleteAccount(account: AccountData)
+    suspend fun deleteAccount(id: Int)
 }
