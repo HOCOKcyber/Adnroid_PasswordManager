@@ -20,12 +20,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.hocok.passwordmanager.domain.model.AccountData
 import com.hocok.passwordmanager.domain.model.ExampleData
 import com.hocok.passwordmanager.ui.screen.auth.login.LoginScreen
 import com.hocok.passwordmanager.ui.screen.auth.registration.RegistrationScreen
 import com.hocok.passwordmanager.ui.screen.create.CreateScreen
 import com.hocok.passwordmanager.ui.screen.details.DetailsContent
+import com.hocok.passwordmanager.ui.screen.details.DetailsScreen
+import com.hocok.passwordmanager.ui.screen.home.HomeScreen
 import com.hocok.passwordmanager.ui.screen.home.HomeScreenContent
 import com.hocok.passwordmanager.ui.theme.PasswordManagerTheme
 
@@ -47,7 +50,7 @@ fun NavigationScreen(){
         },
         floatingActionButton = {
             PasswordManagerFloatingActionButton(
-                onClick = { navController.navigate(Routes.Create) }
+                onClick = { navController.navigate(Routes.Create()) }
             )
         }
     ) {
@@ -71,10 +74,9 @@ fun NavigationScreen(){
             }
 
             composable<Routes.Home> {
-                HomeScreenContent(
-                    accountList = ExampleData.accountList,
+                HomeScreen(
+                    toDetails = {id -> navController.navigate(Routes.Details(id)) },
                     modifier = Modifier.padding(innerPadding),
-                    toDetails = {navController.navigate(Routes.Details)}
                 )
             }
 
@@ -85,14 +87,21 @@ fun NavigationScreen(){
             }
 
             composable<Routes.Create> {
+                val accountDetailsId = it.toRoute<Routes.Create>().id
+
                 CreateScreen(
-                    modifier = Modifier.padding(innerPadding)
+                    id = accountDetailsId,
+                    modifier = Modifier.padding(innerPadding),
+                    toHome = {navController.navigate(Routes.Home)}
                 )
             }
 
             composable<Routes.Details> {
-                DetailsContent(
-                    account = AccountData(),
+                val accountDetailsId = it.toRoute<Routes.Details>().id
+
+                DetailsScreen(
+                    accountId = accountDetailsId,
+                    toChange = {navController.navigate(Routes.Create(accountDetailsId))},
                     modifier = Modifier.padding(innerPadding)
                 )
             }

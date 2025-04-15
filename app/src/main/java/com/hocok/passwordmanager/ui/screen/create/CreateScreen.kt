@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -22,8 +23,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -38,13 +41,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hocok.passwordmanager.R
 import com.hocok.passwordmanager.ui.component.StyleButton
 import com.hocok.passwordmanager.ui.theme.PasswordManagerTheme
+import kotlinx.coroutines.launch
 
 @Composable
 fun CreateScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    toHome: () -> Unit,
+    id: Int? = null,
 ){
-    val viewModel: CreateViewModel = viewModel<CreateViewModel>()
+    val viewModel: CreateViewModel = viewModel<CreateViewModel>(factory = CreateViewModel.factory)
     val uiState by viewModel.uiState.collectAsState()
+
+    if (id != null) LaunchedEffect(key1 = true) { viewModel.fetchAccount(id)}
 
     CreateContent(
         uiState = uiState,
@@ -59,6 +67,8 @@ fun CreateScreen(
         onSliderChange = {viewModel.onEvent(CreateEvent.ChangeSlider(it))},
         generatePassword = {viewModel.onEvent(CreateEvent.GeneratePassword)},
         checkLength = {viewModel.onEvent(CreateEvent.CheckLength)},
+        onSave = {viewModel.onEvent(CreateEvent.OnSave)},
+        toHome = toHome,
         modifier = modifier.padding(horizontal = 10.dp)
     )
 }
@@ -67,6 +77,7 @@ fun CreateScreen(
 @Composable
 fun CreateContent(
     uiState: CreateState,
+    toHome: () -> Unit,
     onLoginChange: (String) -> Unit,
     onServiceChange: (String) -> Unit,
     onDomainChange: (String) -> Unit,
@@ -78,8 +89,10 @@ fun CreateContent(
     onUpperLetterChange: (Boolean) -> Unit,
     generatePassword: () -> Unit,
     checkLength: () -> Unit,
+    onSave: () -> Unit,
     modifier: Modifier = Modifier
 ){
+    val coroutineScope = rememberCoroutineScope()
     Column(
         modifier = modifier
     ) {
@@ -130,8 +143,14 @@ fun CreateContent(
             onSliderChange = onSliderChange,
             checkLength = checkLength,
         )
+        Spacer(Modifier.weight(1f))
         StyleButton(
-            onClick = {},
+            onClick = {
+                coroutineScope.launch {
+                    onSave()
+                    toHome()
+                }
+            },
             textRes = R.string.save,
         )
     }
@@ -306,7 +325,9 @@ fun CreateContentPreview(){
             onLoginChange = {},
             onSliderChange = {},
             generatePassword = {},
-            checkLength = {}
+            checkLength = {},
+            onSave = {},
+            toHome = {},
         )
     }
 }

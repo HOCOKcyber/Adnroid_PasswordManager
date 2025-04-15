@@ -21,10 +21,10 @@ sealed class Routes{
     data object Search: Routes()
 
     @Serializable
-    data object Create: Routes()
+    data class Create(val id: Int? = null): Routes()
 
     @Serializable
-    data object Details: Routes()
+    data class Details(val id: Int): Routes()
 }
 
 data class BottomNavigationRoute(

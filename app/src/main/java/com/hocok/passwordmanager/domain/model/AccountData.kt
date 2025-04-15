@@ -1,7 +1,11 @@
 package com.hocok.passwordmanager.domain.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity
 data class AccountData(
-    val id: Int? = null,
+    @PrimaryKey(autoGenerate = true) val id: Int? = null,
     val login: String = "example@gmail.com",
     val service: String = "example service",
     val domain: String = "errorDomain",
