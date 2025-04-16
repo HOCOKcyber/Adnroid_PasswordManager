@@ -27,6 +27,14 @@ class AccountRepositoryImp(
         return accountDao.saveAccount(cryptoAccount)
     }
 
+    override suspend fun getAccountsByLoginParams(param: String): List<AccountData> {
+        return accountDao.getAccountsByLoginParams("%$param%")
+    }
+
+    override suspend fun getAccountsByServiceParams(param: String): List<AccountData> {
+        return accountDao.getAccountsByServiceParams("%$param%")
+    }
+
     override suspend fun deleteAccount(id: Int) {
         accountDao.deleteAccount(id)
     }

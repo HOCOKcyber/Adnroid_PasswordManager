@@ -36,4 +36,6 @@
     <string name="add_password">Добавить аккаунт</string>
     <string name="change_password">Изменить аккаунт</string>
 
+    <string name="all">Все</string>
+
 </resources>

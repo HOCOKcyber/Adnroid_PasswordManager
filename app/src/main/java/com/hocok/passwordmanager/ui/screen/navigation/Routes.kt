@@ -23,8 +23,9 @@ sealed class Routes{
     @Serializable
     data class Create(val id: Int? = null): Routes()
 
+//    Suffix for transition and search
     @Serializable
-    data class Details(val id: Int): Routes()
+    data class Details(val id: Int, val suffix: String = ""): Routes()
 }
 
 data class BottomNavigationRoute(

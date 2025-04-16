@@ -68,7 +68,7 @@ fun HomeScreenContent(
 ){
     val clipboardManager = LocalClipboardManager.current
     LazyColumn(
-        modifier = modifier
+        modifier = modifier.padding(horizontal = 10.dp).padding(top = 10.dp)
     ) {
         items(accountList){account ->
             HomeAccountCard(
@@ -95,7 +95,8 @@ fun HomeAccountCard(
     onCopy: () -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     sharedTransitionScope: SharedTransitionScope,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    suffix:String = "",
 ){
     Card(
         modifier = modifier.clickable { toDetails() }
@@ -108,7 +109,7 @@ fun HomeAccountCard(
                 AccountPreview(
                     account = account,
                     modifier = Modifier.weight(1f).sharedElement(
-                        rememberSharedContentState(key = account.id.toString()),
+                        rememberSharedContentState(key = "$suffix/${account.id.toString()}"),
                         animatedVisibilityScope = animatedVisibilityScope
                     )
                 )

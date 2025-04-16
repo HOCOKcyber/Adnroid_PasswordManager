@@ -19,6 +19,12 @@ interface AccountDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveAccount(account: AccountData)
 
+    @Query("SELECT * FROM AccountData WHERE login like :param")
+    suspend fun getAccountsByLoginParams(param: String): List<AccountData>
+
+    @Query("SELECT * FROM AccountData WHERE service like :param")
+    suspend fun getAccountsByServiceParams(param: String): List<AccountData>
+
     @Query("DELETE FROM AccountData where id = :id")
     suspend fun deleteAccount(id: Int)
 }

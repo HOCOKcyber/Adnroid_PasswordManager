@@ -33,6 +33,7 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.hocok.passwordmanager.R
@@ -42,6 +43,7 @@ import com.hocok.passwordmanager.ui.screen.create.CreateScreen
 import com.hocok.passwordmanager.ui.screen.details.DetailsScreen
 import com.hocok.passwordmanager.ui.screen.details.DetailsViewModel
 import com.hocok.passwordmanager.ui.screen.home.HomeScreen
+import com.hocok.passwordmanager.ui.screen.search.SearchScreen
 import com.hocok.passwordmanager.ui.theme.PasswordManagerTheme
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -105,8 +107,10 @@ fun NavigationScreen(){
                         }}  },
                     toCreate = { navController.navigate(Routes.Create()) }
                 ) { modifier ->
-                    Text(
-                        text = "SEARCH PAGE",
+                    SearchScreen(
+                        toDetails = {id, suffix -> navController.navigate(Routes.Details(id, suffix))},
+                        animatedVisibilityScope = this,
+                        sharedTransitionScope = this@SharedTransitionLayout,
                         modifier = modifier
                     )
                 }
@@ -129,6 +133,7 @@ fun NavigationScreen(){
 
             composable<Routes.Details> {
                 val accountDetailsId = it.toRoute<Routes.Details>().id
+                val suffix = it.toRoute<Routes.Details>().suffix
 
                 val viewModel: DetailsViewModel =
                     viewModel<DetailsViewModel>(factory = DetailsViewModel.factory)
@@ -140,13 +145,14 @@ fun NavigationScreen(){
                     onAction = {
                         viewModel.deleteAccount(accountDetailsId)
                         navController.popBackStack()
-                    }
+                    },
                 ) { modifier ->
                     DetailsScreen(
                         viewModel = viewModel,
                         accountId = accountDetailsId,
                         toChange = { navController.navigate(Routes.Create(accountDetailsId)) },
                         modifier = modifier,
+                        suffix = suffix,
                         animatedVisibilityScope = this,
                         sharedTransitionScope = this@SharedTransitionLayout
                     )

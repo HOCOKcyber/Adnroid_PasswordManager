@@ -46,6 +46,7 @@ fun DetailsScreen(
     sharedTransitionScope: SharedTransitionScope,
     modifier: Modifier = Modifier,
     viewModel: DetailsViewModel,
+    suffix: String = "",
 ){
     val uiState by viewModel.uiState.collectAsState()
 
@@ -56,6 +57,7 @@ fun DetailsScreen(
     }
 
     DetailsContent(
+        suffix = suffix,
         account = uiState,
         toChange = toChange,
         modifier = modifier,
@@ -73,6 +75,7 @@ fun DetailsContent(
     animatedVisibilityScope: AnimatedVisibilityScope,
     sharedTransitionScope: SharedTransitionScope,
     modifier: Modifier = Modifier,
+    suffix: String = ""
 ){
     val clipManager = LocalClipboardManager.current
     val context = LocalContext.current
@@ -86,7 +89,7 @@ fun DetailsContent(
                 modifier = Modifier.padding(horizontal = 10.dp)
                     .padding(bottom = 20.dp, top = 10.dp)
                     .sharedElement(
-                        rememberSharedContentState(key = account.id.toString()),
+                        rememberSharedContentState(key = "$suffix/${account.id.toString()}"),
                         animatedVisibilityScope = animatedVisibilityScope
                     )
             )
