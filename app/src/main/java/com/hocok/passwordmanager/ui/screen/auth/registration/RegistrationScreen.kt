@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hocok.passwordmanager.R
 import com.hocok.passwordmanager.ui.screen.auth.components.AuthContent
@@ -21,7 +22,7 @@ fun RegistrationScreen(
     toHome : () -> Unit,
 ){
     val viewModel = viewModel<RegistrationViewModel>(factory = RegistrationViewModel.factory)
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     RegistrationScreenContent(
         uiState = uiState,

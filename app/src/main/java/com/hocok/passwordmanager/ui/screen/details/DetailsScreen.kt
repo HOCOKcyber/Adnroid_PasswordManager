@@ -2,6 +2,7 @@ package com.hocok.passwordmanager.ui.screen.details
 
 import android.content.ClipData
 import android.content.Intent
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -30,6 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hocok.passwordmanager.R
 import com.hocok.passwordmanager.domain.model.AccountData
 import com.hocok.passwordmanager.ui.component.AccountPreview
@@ -48,7 +50,7 @@ fun DetailsScreen(
     viewModel: DetailsViewModel,
     suffix: String = "",
 ){
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(
         key1 = true,
@@ -120,6 +122,11 @@ fun DetailsContent(
                 val clipData = ClipData.newPlainText("password", account.password)
                 val clipEntry = ClipEntry(clipData)
                 clipManager.setClip(clipEntry)
+                Toast.makeText(
+                    context,
+                    "Пароль скопирован",
+                    Toast.LENGTH_SHORT,
+                ).show()
             },
             textRes = R.string.copy,
             modifier = Modifier.padding(bottom = 10.dp)

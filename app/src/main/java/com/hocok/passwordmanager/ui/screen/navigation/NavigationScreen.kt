@@ -61,7 +61,9 @@ fun NavigationScreen(){
         ) {
             composable<Routes.Login> {
                 LoginScreen(
-                    toRegistration = { navController.navigate(Routes.Registration) },
+                    toRegistration = { navController.navigate(Routes.Registration){
+                        popUpTo<Routes.Login>()
+                    } },
                     toHome = { navController.navigate(Routes.Home){
                         popUpTo(Routes.Login){
                             inclusive = true
@@ -160,7 +162,6 @@ fun NavigationScreen(){
             }
         }
     }
-
 }
 
 @Composable

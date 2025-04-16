@@ -19,6 +19,13 @@ class LoginViewModel(
 
     val uiState = _uiState.asStateFlow()
 
+    suspend fun isFirstEnter(
+        toRegistration: () -> Unit,
+    ){
+        val correctPassword = dataStoreRep.read()
+        if (correctPassword == "") toRegistration()
+    }
+
 
     fun onEvent(event: LoginEvent){
         when(event){

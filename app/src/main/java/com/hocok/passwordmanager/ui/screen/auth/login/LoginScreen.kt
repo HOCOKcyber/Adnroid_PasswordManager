@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -17,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hocok.passwordmanager.R
 import com.hocok.passwordmanager.ui.screen.auth.components.AuthContent
@@ -30,7 +32,13 @@ fun LoginScreen(
     toHome: () -> Unit,
 ){
     val viewModel: LoginViewModel = viewModel(factory = LoginViewModel.factory)
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(key1 = true) {
+        viewModel.isFirstEnter {
+            toRegistration()
+        }
+    }
 
     LoginScreenContent(
         toRegistration = toRegistration,

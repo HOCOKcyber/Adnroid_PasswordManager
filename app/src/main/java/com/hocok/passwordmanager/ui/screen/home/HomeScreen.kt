@@ -1,6 +1,7 @@
 package com.hocok.passwordmanager.ui.screen.home
 
 import android.content.ClipData
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -26,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -66,22 +68,20 @@ fun HomeScreenContent(
     sharedTransitionScope: SharedTransitionScope,
     modifier: Modifier = Modifier
 ){
-    val clipboardManager = LocalClipboardManager.current
     LazyColumn(
-        modifier = modifier.padding(horizontal = 10.dp).padding(top = 10.dp)
+        modifier = modifier
+            .padding(horizontal = 10.dp)
+            .padding(top = 10.dp)
     ) {
-        items(accountList){account ->
+        items(accountList, key = {it.id!!}){account ->
             HomeAccountCard(
                 account = account,
-                modifier = Modifier.fillMaxSize().padding(bottom = 10.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 10.dp),
                 toDetails = { toDetails(account.id!!) },
                 animatedVisibilityScope = animatedVisibilityScope,
-                sharedTransitionScope = sharedTransitionScope,
-                onCopy = {
-                    val clipData = ClipData.newPlainText("password", account.password)
-                    val clipEntry = ClipEntry(clipData)
-                    clipboardManager.setClip(clipEntry)
-                }
+                sharedTransitionScope = sharedTransitionScope
             )
         }
     }
@@ -92,36 +92,51 @@ fun HomeScreenContent(
 fun HomeAccountCard(
     account: AccountData,
     toDetails: () -> Unit,
-    onCopy: () -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     sharedTransitionScope: SharedTransitionScope,
     modifier: Modifier = Modifier,
     suffix:String = "",
 ){
+    val context = LocalContext.current
+    val clipboardManager = LocalClipboardManager.current
     Card(
         modifier = modifier.clickable { toDetails() }
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(horizontal = 10.dp, vertical = 6.dp)
+                .fillMaxWidth(),
         ) {
             with(sharedTransitionScope){
                 AccountPreview(
                     account = account,
-                    modifier = Modifier.weight(1f).sharedElement(
-                        rememberSharedContentState(key = "$suffix/${account.id.toString()}"),
-                        animatedVisibilityScope = animatedVisibilityScope
-                    )
+                    modifier = Modifier
+                        .weight(1f)
+                        .sharedElement(
+                            rememberSharedContentState(key = "$suffix/${account.id.toString()}"),
+                            animatedVisibilityScope = animatedVisibilityScope
+                        )
                 )
             }
             Spacer(Modifier.width(10.dp))
             IconButton(
-                onClick = onCopy,
-                modifier = Modifier.size(30.dp)
+                onClick = {
+                    val clipData = ClipData.newPlainText("password", account.password)
+                    val clipEntry = ClipEntry(clipData)
+                    clipboardManager.setClip(clipEntry)
+                    Toast.makeText(
+                        context,
+                        "Пароль скопирован",
+                        Toast.LENGTH_LONG,
+                    ).show()
+                },
+                modifier = Modifier.size(40.dp)
             ) {
                 Icon(
                     painter = painterResource(R.drawable.copy_image),
-                    contentDescription = stringResource(R.string.copy)
+                    contentDescription = stringResource(R.string.copy),
+                    modifier = Modifier.size(30.dp)
                 )
             }
         }
