@@ -1,6 +1,6 @@
 package com.hocok.passwordmanager.ui.screen.search
 
-import android.content.ClipData
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -20,23 +20,31 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ClipEntry
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hocok.passwordmanager.R
+import com.hocok.passwordmanager.domain.model.AccountData
+import com.hocok.passwordmanager.ui.component.ActionIcon
+import com.hocok.passwordmanager.ui.component.SwipeActions
 import com.hocok.passwordmanager.ui.screen.home.HomeAccountCard
 import com.hocok.passwordmanager.ui.theme.PasswordManagerTheme
 
@@ -61,6 +69,8 @@ fun SearchScreen(
         animatedVisibilityScope = animatedVisibilityScope,
         sharedTransitionScope = sharedTransitionScope,
         onSearch = {viewModel.getAccounts()},
+        onDelete = {viewModel.onEvent(SearchEvent.DeleteAccount(it))},
+        onFavourite = {viewModel.onEvent(SearchEvent.Favourite(it))},
         modifier = modifier
     )
 }
@@ -74,6 +84,8 @@ fun SearchContent(
     onServiceChange: () -> Unit,
     toDetails: (id: Int, suffix: String) -> Unit,
     onSearch: () -> Unit,
+    onDelete: (Int) -> Unit,
+    onFavourite: (AccountData) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     sharedTransitionScope: SharedTransitionScope,
     modifier: Modifier = Modifier,
@@ -82,7 +94,6 @@ fun SearchContent(
     Column(
         modifier = modifier
     ) {
-        val clipboardManager = LocalClipboardManager.current
         OutlinedTextField(
             value = uiState.params,
             onValueChange = { onSearchChange(it) },
@@ -128,32 +139,44 @@ fun SearchContent(
         LazyColumn(
             modifier = Modifier.padding(top = 10.dp).padding(horizontal = 10.dp)
         ) {
-            if ((uiState.isLogin || uiState.isAll) && uiState.loginList.isNotEmpty()){
+            if ((uiState.isLogin || uiState.isAll)){
+
+                Log.d("Login List Update", "Ok")
                 item {
                     Text(
                         text = stringResource(R.string.login),
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.padding(bottom = 10.dp)
                     )
+                    if (uiState.loginList.isEmpty()) Text(
+                        text = "Пусто",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(bottom = 10.dp)
+                    )
                 }
-                items(uiState.loginList){
-                    HomeAccountCard(
+                items(uiState.loginList, key = {"login/${it.id}"}){
+                    FoundedItem(
                         account = it,
-                        modifier = Modifier.fillMaxSize().padding(bottom = 10.dp),
-                        toDetails = { toDetails(it.id!!, "login") },
                         suffix = "login",
+                        toDetails = {id, suffix  -> toDetails(id, suffix)},
                         animatedVisibilityScope = animatedVisibilityScope,
                         sharedTransitionScope = sharedTransitionScope,
-                        onCopy = {
-                            val clipData = ClipData.newPlainText("password", it.password)
-                            val clipEntry = ClipEntry(clipData)
-                            clipboardManager.setClip(clipEntry)
-                        }
+                        onFavourite = {
+                            onFavourite(it.copy(isFavourite = !it.isFavourite))
+                            onSearch()
+                        },
+                        onDelete = {
+                            onDelete(it.id!!)
+                            onSearch()
+                        },
+                        modifier = Modifier.animateItem()
                     )
                 }
             }
 
-            if ((uiState.isService || uiState.isAll) && uiState.serviceList.isNotEmpty()){
+            if ((uiState.isService || uiState.isAll)){
+
+                Log.d("Service List Update", "Ok")
                 item {
                     Text(
                         text = stringResource(R.string.service),
@@ -161,19 +184,22 @@ fun SearchContent(
                         modifier = Modifier.padding(bottom =  10.dp)
                     )
                 }
-                items(uiState.serviceList){
-                    HomeAccountCard(
+                items(uiState.serviceList, key = {"service/${it.id}"}){
+                    FoundedItem(
                         account = it,
                         suffix = "service",
-                        modifier = Modifier.fillMaxSize().padding(bottom = 10.dp),
-                        toDetails = { toDetails(it.id!!, "service")},
+                        toDetails = {id, suffix  -> toDetails(id, suffix)},
                         animatedVisibilityScope = animatedVisibilityScope,
                         sharedTransitionScope = sharedTransitionScope,
-                        onCopy = {
-                            val clipData = ClipData.newPlainText("password", it.password)
-                            val clipEntry = ClipEntry(clipData)
-                            clipboardManager.setClip(clipEntry)
-                        }
+                        onFavourite = {
+                            onFavourite(it.copy(isFavourite = !it.isFavourite))
+                            onSearch()
+                                      },
+                        onDelete = {
+                            onDelete(it.id!!)
+                            onSearch()
+                        },
+                        modifier = Modifier.animateItem()
                     )
                 }
             }
@@ -183,6 +209,58 @@ fun SearchContent(
 
 
 }
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+fun FoundedItem(
+    onDelete: () -> Unit,
+    suffix: String,
+    toDetails: (Int, String) -> Unit,
+    account: AccountData,
+    onFavourite: () -> Unit,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedTransitionScope: SharedTransitionScope,
+    modifier: Modifier = Modifier
+){
+    var isClose by remember { mutableStateOf(false) }
+
+    SwipeActions(
+        actions = {
+            ActionIcon(
+                onClick = {
+                    isClose = true
+                    onDelete()
+                },
+                icon = Icons.Outlined.Delete,
+                backgroundColor = Color.Red,
+                modifier = Modifier.clip(RoundedCornerShape(topStart = 10.dp, bottomStart = 10.dp) )
+            )
+            ActionIcon(
+                onClick = {
+                    isClose = true
+                    onFavourite()
+                },
+                icon = Icons.Outlined.Star,
+                backgroundColor = Color.Yellow,
+            )
+        },
+        onExpand = {
+            isClose = false
+        },
+        isClose = isClose,
+        modifier = modifier.padding(10.dp)
+    ) {
+        HomeAccountCard(
+            account = account,
+            suffix = suffix,
+            modifier = Modifier.fillMaxSize(),
+            toDetails = { toDetails(account.id!!, suffix)},
+            animatedVisibilityScope = animatedVisibilityScope,
+            sharedTransitionScope = sharedTransitionScope,
+        )
+    }
+    }
+
 
 @Composable
 fun GroupSection(
@@ -222,11 +300,13 @@ fun SearchContentPreview(){
                     onAllChange = {},
                     onLoginChange = {},
                     onServiceChange = {},
-                    toDetails = {id, suffix -> },
+                    toDetails = {_, _ -> },
                     sharedTransitionScope = this@SharedTransitionLayout,
                     animatedVisibilityScope = this,
                     modifier = Modifier.padding(PaddingValues(20.dp)),
-                    onSearch = {}
+                    onSearch = {},
+                    onDelete = {},
+                    onFavourite = {}
                 )
             }
         }

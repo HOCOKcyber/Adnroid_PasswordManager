@@ -11,15 +11,28 @@ import com.hocok.passwordmanager.domain.repository.AccountRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class HomeViewModel(
-  accountRepository: AccountRepository
+  val accountRepository: AccountRepository
 ) :ViewModel() {
     val accountList: StateFlow<List<AccountData>> = accountRepository.getAllAccount().stateIn(
         scope =  viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = listOf<AccountData>()
+        initialValue = listOf()
     )
+
+    fun deleteAccount(id: Int){
+        viewModelScope.launch {
+            accountRepository.deleteAccount(id)
+        }
+    }
+
+    fun saveFavorite(account: AccountData){
+        viewModelScope.launch {
+            accountRepository.saveAccount(account)
+        }
+    }
 
     companion object{
         val factory = viewModelFactory {

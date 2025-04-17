@@ -27,13 +27,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.hocok.passwordmanager.R
@@ -41,7 +39,6 @@ import com.hocok.passwordmanager.ui.screen.auth.login.LoginScreen
 import com.hocok.passwordmanager.ui.screen.auth.registration.RegistrationScreen
 import com.hocok.passwordmanager.ui.screen.create.CreateScreen
 import com.hocok.passwordmanager.ui.screen.details.DetailsScreen
-import com.hocok.passwordmanager.ui.screen.details.DetailsViewModel
 import com.hocok.passwordmanager.ui.screen.home.HomeScreen
 import com.hocok.passwordmanager.ui.screen.search.SearchScreen
 import com.hocok.passwordmanager.ui.theme.PasswordManagerTheme
@@ -137,20 +134,13 @@ fun NavigationScreen(){
                 val accountDetailsId = it.toRoute<Routes.Details>().id
                 val suffix = it.toRoute<Routes.Details>().suffix
 
-                val viewModel: DetailsViewModel =
-                    viewModel<DetailsViewModel>(factory = DetailsViewModel.factory)
+
 
                 TopBarWrapper(
                     title = stringResource(R.string.details),
                     onBack = { navController.popBackStack() },
-                    isDetails = true,
-                    onAction = {
-                        viewModel.deleteAccount(accountDetailsId)
-                        navController.popBackStack()
-                    },
                 ) { modifier ->
                     DetailsScreen(
-                        viewModel = viewModel,
                         accountId = accountDetailsId,
                         toChange = { navController.navigate(Routes.Create(accountDetailsId)) },
                         modifier = modifier,
@@ -240,16 +230,12 @@ fun PasswordManagerFloatingActionButton(
 fun TopBarWrapper(
     title: String,
     onBack: () -> Unit,
-    isDetails: Boolean = false,
-    onAction: () -> Unit = {},
     content: @Composable (modifier: Modifier) -> Unit
 ){
     Scaffold(
         topBar = {PasswordManagerTopBar(
             title = title,
             onBack = onBack,
-            isDetails = isDetails,
-            onAction = onAction
         )}
     ) {
         content(Modifier.padding(it))

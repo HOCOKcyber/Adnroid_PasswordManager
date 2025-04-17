@@ -7,7 +7,9 @@ import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,14 +19,23 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -37,6 +48,8 @@ import com.hocok.passwordmanager.R
 import com.hocok.passwordmanager.domain.model.AccountData
 import com.hocok.passwordmanager.domain.model.ExampleData
 import com.hocok.passwordmanager.ui.component.AccountPreview
+import com.hocok.passwordmanager.ui.component.ActionIcon
+import com.hocok.passwordmanager.ui.component.SwipeActions
 import com.hocok.passwordmanager.ui.theme.PasswordManagerTheme
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -53,7 +66,8 @@ fun HomeScreen(
         accountList = accountList,
         toDetails = toDetails,
         modifier = modifier,
-
+        onDelete = {viewModel.deleteAccount(it)},
+        onFavourite = {viewModel.saveFavorite(it)},
         animatedVisibilityScope = animatedVisibilityScope,
         sharedTransitionScope = sharedTransitionScope
     )
@@ -64,7 +78,9 @@ fun HomeScreen(
 fun HomeScreenContent(
     accountList: List<AccountData>,
     toDetails: (id: Int) -> Unit,
+    onFavourite: (account: AccountData) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
+    onDelete: (id: Int) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     modifier: Modifier = Modifier
 ){
@@ -74,15 +90,43 @@ fun HomeScreenContent(
             .padding(top = 10.dp)
     ) {
         items(accountList, key = {it.id!!}){account ->
-            HomeAccountCard(
-                account = account,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(bottom = 10.dp),
-                toDetails = { toDetails(account.id!!) },
-                animatedVisibilityScope = animatedVisibilityScope,
-                sharedTransitionScope = sharedTransitionScope
-            )
+            var isClose by remember { mutableStateOf(false) }
+
+            SwipeActions(
+                actions = {
+                    ActionIcon(
+                        onClick = {
+                            isClose = true
+                            onDelete(account.id!!)
+                        },
+                        icon = Icons.Outlined.Delete,
+                        backgroundColor = Color.Red,
+                        modifier = Modifier.clip(RoundedCornerShape(topStart = 10.dp, bottomStart = 10.dp) )
+                    )
+                    ActionIcon(
+                        onClick = {
+                            isClose = true
+                            onFavourite(account.copy(isFavourite = !account.isFavourite))
+                        },
+                        icon = Icons.Outlined.Star,
+                        backgroundColor = Color.Yellow,
+                    )
+                },
+                onExpand = {
+                    isClose = false
+                },
+                isClose = isClose,
+                modifier = Modifier.padding(10.dp).animateItem()
+            ) {
+                HomeAccountCard(
+                    account = account,
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    toDetails = { toDetails(account.id!!) },
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    sharedTransitionScope = sharedTransitionScope
+                )
+            }
         }
     }
 }
@@ -99,8 +143,14 @@ fun HomeAccountCard(
 ){
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
-    Card(
+
+    val background =    if (account.isFavourite) MaterialTheme.colorScheme.primaryContainer
+                        else MaterialTheme.colorScheme.secondaryContainer
+
+
+    Box(
         modifier = modifier.clickable { toDetails() }
+            .background(background)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -158,6 +208,8 @@ fun HomeScreenContentPreview(){
             toDetails = {},
             sharedTransitionScope = this@SharedTransitionLayout,
             animatedVisibilityScope = this,
+            onDelete = {},
+            onFavourite = {}
         )}}
     }
 }

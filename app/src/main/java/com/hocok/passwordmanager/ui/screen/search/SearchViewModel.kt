@@ -1,5 +1,6 @@
 package com.hocok.passwordmanager.ui.screen.search
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
@@ -8,11 +9,9 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.hocok.passwordmanager.PasswordManagerApp
 import com.hocok.passwordmanager.domain.model.AccountData
 import com.hocok.passwordmanager.domain.repository.AccountRepository
-import com.hocok.passwordmanager.ui.screen.home.HomeViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
@@ -28,12 +27,16 @@ class SearchViewModel(
 
     fun getAccounts(){
         val params: String = _uiState.value.params
+        Log.d("Update all", "Start")
         viewModelScope.launch {
+            val newLogin = async {  accountRepository.getAccountsByLoginParams(params) }
+            val newService = async { accountRepository.getAccountsByServiceParams(params) }
             _uiState.value = _uiState.value.copy(
-                loginList = accountRepository.getAccountsByLoginParams(params),
-                serviceList = accountRepository.getAccountsByServiceParams(params)
+                loginList = newLogin.await() ,
+                serviceList = newService.await()
             )
         }
+        Log.d("Update all", "Finish")
     }
 
     fun onEvent(event: SearchEvent){
@@ -61,6 +64,16 @@ class SearchViewModel(
                 _uiState.value = _uiState.value.copy(
                     params = event.newParams
                 )}
+            is SearchEvent.DeleteAccount -> {
+                viewModelScope.launch {
+                    accountRepository.deleteAccount(event.id)
+                }
+            }
+            is SearchEvent.Favourite -> {
+                viewModelScope.launch {
+                    accountRepository.saveAccount(event.account)
+                }
+            }
         }
     }
 
@@ -87,5 +100,7 @@ sealed class SearchEvent{
     data class ChangeParams(val newParams: String): SearchEvent()
     data object ChangeAll: SearchEvent()
     data object ChangeLogin: SearchEvent()
+    data class DeleteAccount(val id: Int): SearchEvent()
+    data class Favourite(val account: AccountData): SearchEvent()
     data object ChangeService: SearchEvent()
 }

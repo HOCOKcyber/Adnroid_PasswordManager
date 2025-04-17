@@ -1,7 +1,6 @@
 package com.hocok.passwordmanager.ui.screen.auth.registration
 
 import android.util.Log
-import androidx.datastore.dataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
@@ -35,8 +34,8 @@ class RegistrationViewModel(
                 _uiState.value = _uiState.value.copy( isRepeatVisible = !uiState.value.isRepeatVisible )
             }
             is RegistrationEvent.Submit -> {
-                var err: String = ""
-                var repeatErr: String = ""
+                var err = ""
+                var repeatErr = ""
                 if (_uiState.value.password.length < 8) err = "Менее 8 символов"
                 if (_uiState.value.repeatPassword != _uiState.value.password) repeatErr = "Не совпадает"
                 else {

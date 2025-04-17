@@ -1,5 +1,6 @@
 package com.hocok.passwordmanager.ui.screen.create
 
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -23,11 +24,11 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -93,6 +94,7 @@ fun CreateContent(
     modifier: Modifier = Modifier
 ){
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
     Column(
         modifier = modifier
     ) {
@@ -147,8 +149,15 @@ fun CreateContent(
         StyleButton(
             onClick = {
                 coroutineScope.launch {
-                    onSave()
-                    toHome()
+                    if (uiState.domain.isEmpty() &&
+                        uiState.login.isEmpty() &&
+                        uiState.password.isEmpty() &&
+                        uiState.service.isEmpty()) {
+                         Toast.makeText(context, "Заполните все поля", Toast.LENGTH_SHORT).show()
+                    } else {
+                        onSave()
+                        toHome()
+                    }
                 }
             },
             textRes = R.string.save,

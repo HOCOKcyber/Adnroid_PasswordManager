@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface AccountDao {
 
-    @Query("SELECT * FROM AccountData")
+    @Query("SELECT * FROM AccountData ORDER BY isFavourite DESC")
     fun getAllAccount(): Flow<List<AccountData>>
 
     @Query("SELECT * FROM AccountData where id = :id")
@@ -19,10 +19,10 @@ interface AccountDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveAccount(account: AccountData)
 
-    @Query("SELECT * FROM AccountData WHERE login like :param")
+    @Query("SELECT * FROM AccountData WHERE login like :param ORDER BY isFavourite DESC")
     suspend fun getAccountsByLoginParams(param: String): List<AccountData>
 
-    @Query("SELECT * FROM AccountData WHERE service like :param")
+    @Query("SELECT * FROM AccountData WHERE service like :param ORDER BY isFavourite DESC")
     suspend fun getAccountsByServiceParams(param: String): List<AccountData>
 
     @Query("DELETE FROM AccountData where id = :id")

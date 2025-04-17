@@ -61,8 +61,8 @@ class CreateViewModel(
                 if (_uiState.value.isUpperLetter) alphabet += upperLetter
 
                 for (i in 0.._uiState.value.length.toInt()){
-                    val letter_index = (alphabet.indices).random()
-                    newPassword += alphabet[letter_index]
+                    val letterIndex = (alphabet.indices).random()
+                    newPassword += alphabet[letterIndex]
                 }
 
                 val isNumberInPassword = numbers.indices.any { numbers[it] in newPassword }
@@ -88,19 +88,15 @@ class CreateViewModel(
                 val domain = _uiState.value.domain
                 val password = _uiState.value.password
 
-                if (domain.isNotEmpty() &&
-                    login.isNotEmpty() &&
-                    service.isNotEmpty() &&
-                    password.isNotEmpty())
-                    viewModelScope.launch {
-                        accountRepository.saveAccount(AccountData(
-                            id = _uiState.value.id,
-                            login = login,
-                            password = password,
-                            service = service,
-                            domain = domain
-                        ))
-                    }
+                viewModelScope.launch {
+                    accountRepository.saveAccount(AccountData(
+                        id = _uiState.value.id,
+                        login = login,
+                        password = password,
+                        service = service,
+                        domain = domain
+                    ))
+                }
 
             }
 
