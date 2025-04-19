@@ -2,6 +2,7 @@ package com.hocok.passwordmanager.ui.screen.details
 
 import android.content.ClipData
 import android.content.Intent
+import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
@@ -14,7 +15,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
@@ -63,7 +66,7 @@ fun DetailsScreen(
         suffix = suffix,
         account = uiState,
         toChange = toChange,
-        modifier = modifier,
+        modifier = modifier.verticalScroll(rememberScrollState()),
         animatedVisibilityScope = animatedVisibilityScope,
         sharedTransitionScope = sharedTransitionScope
     )
@@ -115,7 +118,7 @@ fun DetailsContent(
         DetailsSection(
             name = stringResource(R.string.password),
             value = account.password,
-            modifier = Modifier.fillMaxWidth().padding(bottom = 15.dp)
+            modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.weight(1f))
         StyleButton(
@@ -147,7 +150,6 @@ fun DetailsContent(
                 context.startActivity(shareIntent, null)
             },
             textRes = R.string.share,
-            modifier = Modifier.padding(bottom = 10.dp)
         )
     }
 
@@ -175,7 +177,7 @@ fun DetailsSection(
             SelectionContainer{
                 Text(
                     text = value,
-                    maxLines = 1,
+                    maxLines = 3,
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.bodySmall
                 )
@@ -188,7 +190,14 @@ fun DetailsSection(
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Preview(
     showBackground = true,
-    showSystemUi = true,
+)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Preview(
+    showBackground = true,
+    widthDp = 355
 )
 @Composable
 fun DetailsContentPreview(){

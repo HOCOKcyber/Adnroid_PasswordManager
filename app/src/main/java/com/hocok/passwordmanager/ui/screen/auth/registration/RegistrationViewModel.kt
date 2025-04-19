@@ -7,13 +7,15 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.hocok.passwordmanager.PasswordManagerApp
+import com.hocok.passwordmanager.domain.repository.AccountRepository
 import com.hocok.passwordmanager.domain.repository.DataStoreRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class RegistrationViewModel(
-    val dataStoreRep: DataStoreRepository
+    val dataStoreRep: DataStoreRepository,
+    val accountRepository: AccountRepository
 ): ViewModel() {
     private val _uiState = MutableStateFlow(RegistrationState())
 
@@ -41,6 +43,7 @@ class RegistrationViewModel(
                 else {
                     Log.d("Regist",_uiState.value.password)
                     viewModelScope.launch {
+                        accountRepository.deleteAll()
                         dataStoreRep.savePassword(_uiState.value.password)
                         event.oSubmit()
                     }
@@ -61,7 +64,8 @@ class RegistrationViewModel(
         val factory = viewModelFactory {
             initializer {
                 val dataStoreRep = (this[APPLICATION_KEY] as PasswordManagerApp).dataStoreRepository
-                RegistrationViewModel(dataStoreRep = dataStoreRep)
+                val accountRepository = (this[APPLICATION_KEY] as PasswordManagerApp).accountRepository
+                RegistrationViewModel(dataStoreRep = dataStoreRep, accountRepository = accountRepository)
             }
         }
     }

@@ -52,6 +52,7 @@ fun AccountPreview(
             Text(
                 text = account.service,
                 style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
                 modifier = Modifier.padding(bottom = 8.dp)
@@ -59,6 +60,7 @@ fun AccountPreview(
             Text(
                 text = account.login,
                 overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
                 maxLines = 1,
                 style = MaterialTheme.typography.bodySmall
             )

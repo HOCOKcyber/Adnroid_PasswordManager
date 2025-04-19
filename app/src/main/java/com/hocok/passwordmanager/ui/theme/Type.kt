@@ -19,7 +19,7 @@ val Typography = Typography(
     titleMedium = TextStyle(
         fontFamily = monstserrat,
         fontWeight = FontWeight.Bold,
-        fontSize = 40.sp,
+        fontSize = 35.sp,
     ),
     bodySmall = TextStyle(
         fontFamily = monstserrat,

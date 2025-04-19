@@ -27,4 +27,7 @@ interface AccountDao {
 
     @Query("DELETE FROM AccountData where id = :id")
     suspend fun deleteAccount(id: Int)
+
+    @Query("DELETE FROM AccountData ")
+    suspend fun deleteAll()
 }

@@ -1,6 +1,7 @@
 package com.hocok.passwordmanager.ui.screen.home
 
 import android.content.ClipData
+import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
@@ -186,7 +187,8 @@ fun HomeAccountCard(
                 Icon(
                     painter = painterResource(R.drawable.copy_image),
                     contentDescription = stringResource(R.string.copy),
-                    modifier = Modifier.size(30.dp)
+                    modifier = Modifier.size(30.dp),
+                    tint = MaterialTheme.colorScheme.secondary
                 )
             }
         }
@@ -196,7 +198,14 @@ fun HomeAccountCard(
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Preview(
     showBackground = true,
-    showSystemUi = true
+    )
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Preview(
+    showBackground = true,
+    widthDp = 355
 )
 @Composable
 fun HomeScreenContentPreview(){

@@ -16,4 +16,6 @@ interface AccountRepository {
     suspend fun getAccountsByServiceParams(param: String): List<AccountData>
 
     suspend fun deleteAccount(id: Int)
+
+    suspend fun deleteAll()
 }

@@ -7,7 +7,9 @@
     <string name="forgot_password">Не помню пароль</string>
     <string name="continue_text">Продолжить</string>
     <string name="password_repeat">Повторите пароль</string>
-    <string name="create_password">Регистрация</string>
+    <string name="registration">Регистрация</string>
+    <string name="create_password">Создайте пароль для входа в приложение</string>
+    <string name="create_new_password">При создании нового пароля данные будут утеряны*</string>
 
     <string name="copy">Копировать</string>
     <string name="home">Главная</string>
@@ -37,5 +39,5 @@
     <string name="change_password">Изменить аккаунт</string>
 
     <string name="all">Все</string>
-
+    <string name="empty">Пусто</string>
 </resources>

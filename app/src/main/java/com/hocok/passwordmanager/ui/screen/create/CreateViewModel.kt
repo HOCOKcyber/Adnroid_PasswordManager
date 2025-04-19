@@ -41,9 +41,7 @@ class CreateViewModel(
 
                 try {
                     val correctLength = _uiState.value.length.toInt()
-                    newLength = if (correctLength > 20) "20"
-                                else if (correctLength < 8) "8"
-                                else correctLength.toString()
+                    newLength = correctLength.coerceIn(8, 20).toString()
                 } catch (e: NumberFormatException){
                     newLength = "8"
                 }

@@ -1,5 +1,6 @@
 package com.hocok.passwordmanager.ui.screen.search
 
+import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
@@ -149,8 +150,8 @@ fun SearchContent(
                         modifier = Modifier.padding(bottom = 10.dp)
                     )
                     if (uiState.loginList.isEmpty()) Text(
-                        text = "Пусто",
-                        style = MaterialTheme.typography.bodyLarge,
+                        text = stringResource(R.string.empty),
+                        style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(bottom = 10.dp)
                     )
                 }
@@ -182,6 +183,11 @@ fun SearchContent(
                         text = stringResource(R.string.service),
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.padding(bottom =  10.dp)
+                    )
+                    if (uiState.serviceList.isEmpty()) Text(
+                        text = stringResource(R.string.empty),
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(bottom = 10.dp)
                     )
                 }
                 items(uiState.serviceList, key = {"service/${it.id}"}){
@@ -288,7 +294,14 @@ fun GroupSection(
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Preview(
     showBackground = true,
-    showSystemUi = true,
+)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Preview(
+    showBackground = true,
+    widthDp = 355
 )
 @Composable
 fun SearchContentPreview(){

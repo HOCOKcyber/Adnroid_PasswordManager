@@ -1,5 +1,6 @@
 package com.hocok.passwordmanager.ui.screen.create
 
+import android.content.res.Configuration
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.border
@@ -149,9 +150,9 @@ fun CreateContent(
         StyleButton(
             onClick = {
                 coroutineScope.launch {
-                    if (uiState.domain.isEmpty() &&
-                        uiState.login.isEmpty() &&
-                        uiState.password.isEmpty() &&
+                    if (uiState.domain.isEmpty() ||
+                        uiState.login.isEmpty() ||
+                        uiState.password.isEmpty() ||
                         uiState.service.isEmpty()) {
                          Toast.makeText(context, "Заполните все поля", Toast.LENGTH_SHORT).show()
                     } else {
@@ -317,11 +318,19 @@ fun CheckedSection(
 
 @Preview(
     showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Preview(
+    showBackground = true,
     showSystemUi = true,
+)
+@Preview(
+    showBackground = true,
+    widthDp = 355
 )
 @Composable
 fun CreateContentPreview(){
-    PasswordManagerTheme {
+    PasswordManagerTheme() {
         CreateContent(
             uiState = CreateState(),
             onSymbolsChange = {},

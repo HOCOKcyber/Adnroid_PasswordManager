@@ -1,5 +1,7 @@
 package com.hocok.passwordmanager.ui.screen.navigation
 
+import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.background
@@ -19,6 +21,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -27,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
@@ -58,7 +63,7 @@ fun NavigationScreen(){
         ) {
             composable<Routes.Login> {
                 LoginScreen(
-                    toRegistration = { navController.navigate(Routes.Registration){
+                    toRegistration = { navController.navigate(Routes.Registration(it)){
                         popUpTo<Routes.Login>()
                     } },
                     toHome = { navController.navigate(Routes.Home){
@@ -67,12 +72,15 @@ fun NavigationScreen(){
                         }
                     } }
                 )
+
             }
 
             composable<Routes.Registration> {
+                val information: String = it.toRoute<Routes.Registration>().information
                 RegistrationScreen(
+                    information = information,
                     toHome = { navController.navigate(Routes.Home){
-                        popUpTo(Routes.Registration){
+                        popUpTo(Routes.Registration(information)){
                             inclusive = true
                         }
                     } }
@@ -247,14 +255,13 @@ fun TopBarWrapper(
 fun PasswordManagerTopBar(
     title: String,
     onBack: () -> Unit,
-    isDetails: Boolean = false,
-    onAction: () -> Unit = {},
 ){
     CenterAlignedTopAppBar(
         title = {
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.titleMedium,
+                fontSize = 28.sp,
             )
         },
         navigationIcon = {
@@ -263,28 +270,23 @@ fun PasswordManagerTopBar(
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                    contentDescription = stringResource(R.string.back)
+                    contentDescription = stringResource(R.string.back),
                 )
             }
         },
-        actions = {
-            if (isDetails)
-                IconButton(
-                    onClick = onAction
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Delete,
-                        contentDescription = stringResource(R.string.delete),
-                        tint = Color.Red
-                    )
-                }
-            else Unit
-        }
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            navigationIconContentColor = MaterialTheme.colorScheme.primary,
+            titleContentColor = MaterialTheme.colorScheme.primary
+        )
     )
 }
 
 @Preview(
     showBackground = true
+)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
 fun PasswordManagerFloatingActionButtonPreview(){
@@ -296,6 +298,10 @@ fun PasswordManagerFloatingActionButtonPreview(){
 }
 
 @Preview
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
 @Composable
 fun NavigationBottomBarPreview(){
     PasswordManagerTheme {
@@ -306,13 +312,21 @@ fun NavigationBottomBarPreview(){
     }
 }
 
-@Preview
+@Preview(
+    showBackground = true,
+)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Preview(
+    showBackground = true,
+    widthDp = 355,
+)
 @Composable
 fun PasswordManagerTopBarPreview(){
     PasswordManagerTopBar(
         title = "Изменение пароля",
-        onBack = {},
-        onAction = {},
-        isDetails = true
+        onBack = {}
     )
 }

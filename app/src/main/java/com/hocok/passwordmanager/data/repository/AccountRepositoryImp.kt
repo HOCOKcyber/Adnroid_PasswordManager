@@ -39,4 +39,8 @@ class AccountRepositoryImp(
         accountDao.deleteAccount(id)
     }
 
+    override suspend fun deleteAll() {
+        accountDao.deleteAll()
+    }
+
 }

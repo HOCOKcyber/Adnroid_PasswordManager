@@ -19,12 +19,14 @@ class LoginViewModel(
 
     val uiState = _uiState.asStateFlow()
 
-    suspend fun isFirstEnter(
-        toRegistration: () -> Unit,
-    ){
+    suspend fun checkFirstTime(toRegistration: () -> Unit){
         val correctPassword = dataStoreRep.read()
-        if (correctPassword == "") toRegistration()
+        _uiState.value = if (correctPassword.isEmpty()) {
+                                    toRegistration()
+                                    _uiState.value.copy(isFirstTime = LoginFirstTime.FirstTime)
+                        } else _uiState.value.copy(isFirstTime = LoginFirstTime.NotFirstTime)
     }
+
 
 
     fun onEvent(event: LoginEvent){
@@ -61,7 +63,14 @@ data class LoginState(
     val password: String = "",
     val passwordError: String = "",
     val isVisible: Boolean = false,
+    val isFirstTime: LoginFirstTime = LoginFirstTime.Loading
 )
+
+sealed class LoginFirstTime{
+    data object Loading: LoginFirstTime()
+    data object FirstTime: LoginFirstTime()
+    data object NotFirstTime: LoginFirstTime()
+}
 
 sealed class LoginEvent{
     data class ChangePassword( val newPassword: String ): LoginEvent()

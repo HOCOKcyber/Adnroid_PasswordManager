@@ -1,12 +1,20 @@
 package com.hocok.passwordmanager.ui.screen.auth.registration
 
+import android.content.res.Configuration
+import android.util.Log
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -19,9 +27,10 @@ import com.hocok.passwordmanager.ui.theme.PasswordManagerTheme
 @Composable
 fun RegistrationScreen(
     toHome : () -> Unit,
+    information: String = stringResource(R.string.create_password)
 ){
     val viewModel = viewModel<RegistrationViewModel>(factory = RegistrationViewModel.factory)
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsState()
 
     RegistrationScreenContent(
         uiState = uiState,
@@ -29,7 +38,8 @@ fun RegistrationScreen(
         onFirstValueChange = {viewModel.onEvent(RegistrationEvent.PasswordChange(it))},
         onFirstVisibleChange = {viewModel.onEvent(RegistrationEvent.VisibleChange)},
         onRepeatValueChange = {viewModel.onEvent(RegistrationEvent.RepeatPasswordChange(it))},
-        onRepeatVisibleChange = {viewModel.onEvent(RegistrationEvent.RepeatVisibleChange)}
+        onRepeatVisibleChange = {viewModel.onEvent(RegistrationEvent.RepeatVisibleChange)},
+        information = information
     )
 }
 
@@ -42,6 +52,7 @@ fun RegistrationScreenContent(
     onRepeatValueChange: (String) -> Unit,
     onFirstVisibleChange: () -> Unit,
     onRepeatVisibleChange: () -> Unit,
+    information: String,
 ){
     Column(
         modifier = Modifier.fillMaxSize()
@@ -51,7 +62,8 @@ fun RegistrationScreenContent(
         )
         AuthContent(
             onContinueButton = onSubmit,
-            title = R.string.create_password,
+            title = R.string.registration,
+            information = information,
             modifier = Modifier.weight(2f)
         ){
             PasswordTextField(
@@ -67,23 +79,37 @@ fun RegistrationScreenContent(
                 onValueChange = {onRepeatValueChange(it)},
                 isVisible = uiState.isRepeatVisible,
                 onVisibleChange = onRepeatVisibleChange,
+                text = R.string.password_repeat,
                 errorMessage = uiState.repeatErrorMessage
             )
         }
     }
 }
 
-@Preview(showBackground = true)
+
+@Preview(
+    showBackground = true,
+)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+    )
+@Preview(
+    showBackground = true,
+    widthDp = 355
+)
 @Composable
 fun RegistrationScreenPreview(){
-    PasswordManagerTheme {
+    PasswordManagerTheme(
+    ) {
         RegistrationScreenContent(
             uiState = RegistrationState(),
             onSubmit = {},
             onFirstValueChange = {},
             onFirstVisibleChange = {},
             onRepeatValueChange = {},
-            onRepeatVisibleChange = {}
+            onRepeatVisibleChange = {},
+            information = stringResource(R.string.create_password)
         )
     }
 }

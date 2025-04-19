@@ -25,6 +25,7 @@ import com.hocok.passwordmanager.ui.component.StyleButton
 fun AuthContent(
     onContinueButton: () -> Unit,
     modifier: Modifier = Modifier,
+    information: String = "",
     @StringRes title: Int = R.string.welcome,
     content: @Composable () -> Unit = {},
 ){
@@ -43,8 +44,9 @@ fun AuthContent(
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 textAlign = TextAlign.Start,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp)
             )
+            if (information.isNotEmpty()) Text(text = information, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.secondary)
             Spacer(Modifier.weight(1f))
 
 //            HERE LOGIN CONTENT

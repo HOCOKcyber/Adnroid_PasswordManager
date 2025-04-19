@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.data.ParameterInformation
 import kotlinx.serialization.Serializable
 
 sealed class Routes{
@@ -12,7 +13,7 @@ sealed class Routes{
     data object Login: Routes()
 
     @Serializable
-    data object Registration: Routes()
+    data class Registration(val information: String): Routes()
 
     @Serializable
     data object Home: Routes()
