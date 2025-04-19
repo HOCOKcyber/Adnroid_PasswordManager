@@ -1,6 +1,5 @@
 package com.hocok.passwordmanager.ui.screen.search
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
@@ -27,7 +26,6 @@ class SearchViewModel(
 
     fun getAccounts(){
         val params: String = _uiState.value.params
-        Log.d("Update all", "Start")
         viewModelScope.launch {
             val newLogin = async {  accountRepository.getAccountsByLoginParams(params) }
             val newService = async { accountRepository.getAccountsByServiceParams(params) }
@@ -36,27 +34,17 @@ class SearchViewModel(
                 serviceList = newService.await()
             )
         }
-        Log.d("Update all", "Finish")
     }
 
     fun onEvent(event: SearchEvent){
         when(event){
-            is SearchEvent.ChangeAll -> {
-                _uiState.value = _uiState.value.copy(
-                    isAll = true,
-                    isLogin = false,
-                    isService = false,
-                )
-            }
             is SearchEvent.ChangeService -> {
                 _uiState.value = _uiState.value.copy(
-                    isAll = false,
                     isLogin = false,
                     isService = true,
                 )}
             is SearchEvent.ChangeLogin -> {
                 _uiState.value = _uiState.value.copy(
-                    isAll = false,
                     isLogin = true,
                     isService = false,
                 )}
@@ -67,11 +55,13 @@ class SearchViewModel(
             is SearchEvent.DeleteAccount -> {
                 viewModelScope.launch {
                     accountRepository.deleteAccount(event.id)
+                    getAccounts()
                 }
             }
             is SearchEvent.Favourite -> {
                 viewModelScope.launch {
                     accountRepository.saveAccount(event.account)
+                    getAccounts()
                 }
             }
         }
@@ -89,8 +79,7 @@ class SearchViewModel(
 
 data class SearchState(
     val params: String = "",
-    val isAll: Boolean = true,
-    val isLogin: Boolean = false,
+    val isLogin: Boolean = true,
     val isService: Boolean = false,
     val loginList: List<AccountData> = listOf(),
     val serviceList: List<AccountData> = listOf(),
@@ -98,9 +87,8 @@ data class SearchState(
 
 sealed class SearchEvent{
     data class ChangeParams(val newParams: String): SearchEvent()
-    data object ChangeAll: SearchEvent()
     data object ChangeLogin: SearchEvent()
+    data object ChangeService: SearchEvent()
     data class DeleteAccount(val id: Int): SearchEvent()
     data class Favourite(val account: AccountData): SearchEvent()
-    data object ChangeService: SearchEvent()
 }

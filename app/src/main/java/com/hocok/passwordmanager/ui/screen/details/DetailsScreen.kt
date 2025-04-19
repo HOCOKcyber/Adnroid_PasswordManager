@@ -13,11 +13,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
@@ -66,7 +65,7 @@ fun DetailsScreen(
         suffix = suffix,
         account = uiState,
         toChange = toChange,
-        modifier = modifier.verticalScroll(rememberScrollState()),
+        modifier = modifier.fillMaxSize(),
         animatedVisibilityScope = animatedVisibilityScope,
         sharedTransitionScope = sharedTransitionScope
     )
@@ -86,7 +85,7 @@ fun DetailsContent(
     val clipManager = LocalClipboardManager.current
     val context = LocalContext.current
     Column(
-        modifier = modifier.padding(horizontal = 10.dp),
+        modifier = modifier.fillMaxSize().padding(horizontal = 10.dp),
     ) {
         with(sharedTransitionScope){
             AccountPreview(

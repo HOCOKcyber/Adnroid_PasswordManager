@@ -4,7 +4,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.data.ParameterInformation
 import kotlinx.serialization.Serializable
 
 sealed class Routes{

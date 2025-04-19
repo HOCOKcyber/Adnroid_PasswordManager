@@ -1,7 +1,6 @@
 package com.hocok.passwordmanager.ui.screen.search
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -63,7 +62,6 @@ fun SearchScreen(
     SearchContent(
         uiState = uiState,
         onSearchChange = {viewModel.onEvent(SearchEvent.ChangeParams(it))},
-        onAllChange = {viewModel.onEvent(SearchEvent.ChangeAll)},
         onLoginChange = {viewModel.onEvent(SearchEvent.ChangeLogin)},
         onServiceChange = {viewModel.onEvent(SearchEvent.ChangeService)},
         toDetails = toDetails,
@@ -80,7 +78,6 @@ fun SearchScreen(
 @Composable
 fun SearchContent(
     onSearchChange: (String) -> Unit,
-    onAllChange: () -> Unit,
     onLoginChange: () -> Unit,
     onServiceChange: () -> Unit,
     toDetails: (id: Int, suffix: String) -> Unit,
@@ -119,12 +116,6 @@ fun SearchContent(
             modifier = Modifier.fillMaxWidth(),
         ) {
             GroupSection(
-                name = stringResource(R.string.all),
-                isActive = uiState.isAll,
-                onChange = onAllChange,
-                modifier = Modifier.weight(1f)
-            )
-            GroupSection(
                 name = stringResource(R.string.login),
                 isActive = uiState.isLogin,
                 onChange = onLoginChange,
@@ -140,81 +131,36 @@ fun SearchContent(
         LazyColumn(
             modifier = Modifier.padding(top = 10.dp).padding(horizontal = 10.dp)
         ) {
-            if ((uiState.isLogin || uiState.isAll)){
+            val correctList = if (uiState.isLogin) uiState.loginList else uiState.serviceList
+            val suffix = if (uiState.isLogin) "login" else "service"
 
-                Log.d("Login List Update", "Ok")
-                item {
-                    Text(
-                        text = stringResource(R.string.login),
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.padding(bottom = 10.dp)
-                    )
-                    if (uiState.loginList.isEmpty()) Text(
-                        text = stringResource(R.string.empty),
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(bottom = 10.dp)
-                    )
-                }
-                items(uiState.loginList, key = {"login/${it.id}"}){
-                    FoundedItem(
-                        account = it,
-                        suffix = "login",
-                        toDetails = {id, suffix  -> toDetails(id, suffix)},
-                        animatedVisibilityScope = animatedVisibilityScope,
-                        sharedTransitionScope = sharedTransitionScope,
-                        onFavourite = {
-                            onFavourite(it.copy(isFavourite = !it.isFavourite))
-                            onSearch()
-                        },
-                        onDelete = {
-                            onDelete(it.id!!)
-                            onSearch()
-                        },
-                        modifier = Modifier.animateItem()
-                    )
-                }
+            item {
+                if (correctList.isEmpty()) Text(
+                    text = stringResource(R.string.empty),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(bottom = 10.dp)
+                )
             }
-
-            if ((uiState.isService || uiState.isAll)){
-
-                Log.d("Service List Update", "Ok")
-                item {
-                    Text(
-                        text = stringResource(R.string.service),
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.padding(bottom =  10.dp)
-                    )
-                    if (uiState.serviceList.isEmpty()) Text(
-                        text = stringResource(R.string.empty),
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(bottom = 10.dp)
-                    )
-                }
-                items(uiState.serviceList, key = {"service/${it.id}"}){
-                    FoundedItem(
-                        account = it,
-                        suffix = "service",
-                        toDetails = {id, suffix  -> toDetails(id, suffix)},
-                        animatedVisibilityScope = animatedVisibilityScope,
-                        sharedTransitionScope = sharedTransitionScope,
-                        onFavourite = {
-                            onFavourite(it.copy(isFavourite = !it.isFavourite))
-                            onSearch()
-                                      },
-                        onDelete = {
-                            onDelete(it.id!!)
-                            onSearch()
-                        },
-                        modifier = Modifier.animateItem()
-                    )
-                }
+            items(correctList, key = {"$suffix/${it.id}"}){
+                FoundedItem(
+                    account = it,
+                    suffix = suffix,
+                    toDetails = {id, suffix  -> toDetails(id, suffix)},
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    sharedTransitionScope = sharedTransitionScope,
+                    onFavourite = {
+                        onFavourite(it.copy(isFavourite = !it.isFavourite))
+                    },
+                    onDelete = {
+                        onDelete(it.id!!)
+                    },
+                    modifier = Modifier.animateItem()
+                )
             }
+        }
         }
         
     }
-
-
-}
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -310,7 +256,6 @@ fun SearchContentPreview(){
             AnimatedVisibility(true) {
                 SearchContent(
                     onSearchChange = {},
-                    onAllChange = {},
                     onLoginChange = {},
                     onServiceChange = {},
                     toDetails = {_, _ -> },

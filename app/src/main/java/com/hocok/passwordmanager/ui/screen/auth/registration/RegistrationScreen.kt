@@ -1,22 +1,18 @@
 package com.hocok.passwordmanager.ui.screen.auth.registration
 
 import android.content.res.Configuration
-import android.util.Log
-import androidx.compose.foundation.isSystemInDarkTheme
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Text
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hocok.passwordmanager.R
 import com.hocok.passwordmanager.ui.screen.auth.components.AuthContent
@@ -31,15 +27,19 @@ fun RegistrationScreen(
 ){
     val viewModel = viewModel<RegistrationViewModel>(factory = RegistrationViewModel.factory)
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
     RegistrationScreenContent(
         uiState = uiState,
-        onSubmit = { viewModel.onEvent(RegistrationEvent.Submit(toHome)) },
         onFirstValueChange = {viewModel.onEvent(RegistrationEvent.PasswordChange(it))},
         onFirstVisibleChange = {viewModel.onEvent(RegistrationEvent.VisibleChange)},
         onRepeatValueChange = {viewModel.onEvent(RegistrationEvent.RepeatPasswordChange(it))},
         onRepeatVisibleChange = {viewModel.onEvent(RegistrationEvent.RepeatVisibleChange)},
-        information = information
+        information = information,
+        onSubmit = {
+            if (uiState.password.length < 8) Toast.makeText(context, "Пароль должен быть не менее 8 символов",Toast.LENGTH_SHORT).show()
+            else viewModel.onEvent(RegistrationEvent.Submit(toHome))
+                   },
     )
 }
 
