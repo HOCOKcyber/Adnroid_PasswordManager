@@ -22,12 +22,19 @@
     <string name="domain">Domain</string>
     <string name="domain_placeholder">Link to the service/website</string>
 
-    <string name="password_placeholder">Enter password</string>
+    <string name="password_input">Input password</string>
+    <string name="password_mask_input">Input password mask</string>
     <string name="lenght">Length</string>
     <string name="numbers">Numbers</string>
     <string name="symbols">Symbols</string>
+    <string name="lower_letter">Lower letters</string>
+    <string name="mask_instruction">Instructions for the mask:</string>
     <string name="upper_letters">Uppercase letters</string>
     <string name="save">Save</string>
+    <string name="change_password_method">Change the password generation method</string>
+    <string name="here_password">Your password will be here</string>
+    <string name="mask_error">Incorrect mask</string>
+
 
     <string name="details">Details</string>
     <string name="change">Change</string>

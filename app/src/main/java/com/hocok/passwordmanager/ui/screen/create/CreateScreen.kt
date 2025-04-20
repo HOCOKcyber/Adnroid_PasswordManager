@@ -3,6 +3,7 @@ package com.hocok.passwordmanager.ui.screen.create
 import android.content.res.Configuration
 import android.widget.Toast
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,8 +19,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -58,6 +62,7 @@ fun CreateScreen(
 ){
     val viewModel: CreateViewModel = viewModel<CreateViewModel>(factory = CreateViewModel.factory)
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
     if (id != null) LaunchedEffect(key1 = true) { viewModel.fetchAccount(id)}
 
@@ -68,14 +73,17 @@ fun CreateScreen(
         onUpperLetterChange = {viewModel.onEvent(CreateEvent.CheckedUpperLetter)},
         onLengthChange = {viewModel.onEvent(CreateEvent.ChangeLength(it))},
         onPasswordChange = {viewModel.onEvent(CreateEvent.ChangePassword(it))},
+        onMaskChange = {viewModel.onEvent(CreateEvent.ChangeMask(it))},
         onDomainChange = {viewModel.onEvent(CreateEvent.ChangeDomain(it))},
         onServiceChange = {viewModel.onEvent(CreateEvent.ChangeService(it))},
         onLoginChange = {viewModel.onEvent(CreateEvent.ChangeLogin(it))},
         onSliderChange = {viewModel.onEvent(CreateEvent.ChangeSlider(it))},
-        generatePassword = {viewModel.onEvent(CreateEvent.GeneratePassword)},
+        generateRandomPassword = {viewModel.onEvent(CreateEvent.GenerateRandomPassword)},
         checkLength = {viewModel.onEvent(CreateEvent.CheckLength)},
         onSave = {viewModel.onEvent(CreateEvent.OnSave)},
         toHome = toHome,
+        generateMaskPassword = {viewModel.onEvent(CreateEvent.GenerateMaskPassword(context))},
+        onChangePasswordMethod = {viewModel.onEvent(CreateEvent.ChangePasswordMethod)},
         modifier = modifier.padding(horizontal = 10.dp).fillMaxSize().verticalScroll(rememberScrollState())
     )
 }
@@ -89,12 +97,15 @@ fun CreateContent(
     onServiceChange: (String) -> Unit,
     onDomainChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
+    onMaskChange: (String) -> Unit,
     onLengthChange: (String) -> Unit,
     onSliderChange: (Float) -> Unit,
     onNumbersChange: (Boolean) -> Unit,
     onSymbolsChange: (Boolean) -> Unit,
     onUpperLetterChange: (Boolean) -> Unit,
-    generatePassword: () -> Unit,
+    generateRandomPassword: () -> Unit,
+    generateMaskPassword: () -> Unit,
+    onChangePasswordMethod: () -> Unit,
     checkLength: () -> Unit,
     onSave: () -> Unit,
     modifier: Modifier = Modifier
@@ -128,29 +139,72 @@ fun CreateContent(
             iconId = R.drawable.link_image,
             modifier = Modifier.padding(bottom = 20.dp)
         )
-        AccountDataInputSection(
-            name = stringResource(R.string.password),
-            placeholder = stringResource(R.string.password_placeholder),
-            value = uiState.password,
-            onValueChange = onPasswordChange,
-            iconId = R.drawable.refresh_image,
-            isLeadingIcon = false,
-            onClick = generatePassword,
-            modifier = Modifier.padding(20.dp)
-        )
-        ParametersSection(
-            modifier = Modifier.padding(20.dp),
-            isSymbols = uiState.isSymbols,
-            isNumbers = uiState.isNumbers,
-            isUpperLetter = uiState.isUpperLetter,
-            lengthValue = uiState.length,
-            onLengthChange = onLengthChange,
-            onNumbersChange = onNumbersChange,
-            onSymbolsChange = onSymbolsChange,
-            onUpperLetterChange = onUpperLetterChange,
-            onSliderChange = onSliderChange,
-            checkLength = checkLength,
-        )
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text(
+                text = stringResource(R.string.password),
+                style = MaterialTheme.typography.bodyMedium,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.align(Alignment.Center)
+            )
+            IconButton(
+                onClick = onChangePasswordMethod,
+                modifier = Modifier.align(Alignment.CenterEnd)
+            ) {
+                Icon(
+                    Icons.Default.PlayArrow,
+                    contentDescription = stringResource(R.string.change_password_method),
+                    tint = MaterialTheme.colorScheme.secondary
+                )
+            }
+        }
+        AnimatedVisibility(
+            uiState.isRandomPassword
+        ) {
+            Column {
+                PasswordCreator(
+                    value = uiState.password,
+                    onValueChange = onPasswordChange,
+                    placeholder = stringResource(R.string.password_input),
+                    onClick = generateRandomPassword
+                )
+                RandomParametersSection(
+                    modifier = Modifier.padding(20.dp),
+                    isSymbols = uiState.isSymbols,
+                    isNumbers = uiState.isNumbers,
+                    isUpperLetter = uiState.isUpperLetter,
+                    lengthValue = uiState.length,
+                    onLengthChange = onLengthChange,
+                    onNumbersChange = onNumbersChange,
+                    onSymbolsChange = onSymbolsChange,
+                    onUpperLetterChange = onUpperLetterChange,
+                    onSliderChange = onSliderChange,
+                    checkLength = checkLength,
+                )
+            }
+        }
+        AnimatedVisibility(!uiState.isRandomPassword) {
+            Column {
+                PasswordCreator(
+                    value = uiState.mask,
+                    onValueChange = onMaskChange,
+                    placeholder = stringResource(R.string.password_mask_input),
+                    onClick = generateMaskPassword
+                )
+                MaskParametersSection(
+                    textInformation = when{
+                        uiState.maskError.isNotEmpty() -> uiState.maskError
+                        uiState.password.isNotEmpty() -> uiState.password
+                        else -> stringResource(R.string.here_password)
+                    },
+                    textInformationColor =  if (uiState.maskError.isNotEmpty()) MaterialTheme.colorScheme.error
+                                            else MaterialTheme.colorScheme.primary
+                )
+            }
+        }
         Spacer(Modifier.weight(1f))
         StyleButton(
             onClick = {
@@ -179,20 +233,7 @@ fun AccountDataInputSection(
     placeholder: String,
     @DrawableRes iconId: Int,
     modifier: Modifier = Modifier,
-    isLeadingIcon: Boolean = true,
-    onClick: () -> Unit = {},
 ){
-    Column(
-        modifier = modifier
-    ) {
-        Text(
-            text = name,
-            style = MaterialTheme.typography.bodyMedium,
-            fontSize = 18.sp,
-            color = MaterialTheme.colorScheme.primary,
-            textAlign = if (isLeadingIcon) TextAlign.Start else TextAlign.Center,
-            modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp)
-        )
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
@@ -206,24 +247,57 @@ fun AccountDataInputSection(
                 )
             },
             textStyle = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.fillMaxWidth(),
-            leadingIcon = if (isLeadingIcon) { -> Icon(painterResource(iconId), contentDescription = name)}
-                        else null,
-            trailingIcon = if (!isLeadingIcon) { ->
-                        IconButton(onClick = onClick)
-                        { Icon(painterResource(iconId), contentDescription = name) }
-                        } else null,
+            modifier = modifier.fillMaxWidth(),
+            leadingIcon = { Icon(painterResource(iconId), contentDescription = name)},
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = Color.Transparent,
                 focusedIndicatorColor = MaterialTheme.colorScheme.primaryContainer,
                 focusedContainerColor = Color.Transparent,
             )
         )
-    }
+
 }
 
 @Composable
-fun ParametersSection(
+fun PasswordCreator(
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+){
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        singleLine = true,
+        maxLines = 1,
+        placeholder = {
+            Text(
+                text = placeholder,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.secondary
+            )
+        },
+        textStyle = MaterialTheme.typography.bodySmall,
+        modifier = modifier.fillMaxWidth().padding(20.dp),
+        trailingIcon = {
+            IconButton(
+                onClick = onClick
+            ) {
+                Icon(
+                    painterResource(R.drawable.refresh_image),
+                    contentDescription = stringResource(R.string.create_password))
+            }},
+        colors = TextFieldDefaults.colors(
+            unfocusedContainerColor = Color.Transparent,
+            focusedIndicatorColor = MaterialTheme.colorScheme.primaryContainer,
+            focusedContainerColor = Color.Transparent,
+        )
+    )
+}
+
+@Composable
+fun RandomParametersSection(
     lengthValue: String,
     onLengthChange: (String) -> Unit,
     onNumbersChange: (Boolean) -> Unit,
@@ -330,6 +404,60 @@ fun CheckedSection(
     }
 }
 
+@Composable
+fun MaskParametersSection(
+    textInformation: String,
+    textInformationColor: Color = MaterialTheme.colorScheme.primary,
+){
+    Box{
+        SelectionContainer{
+            Text(
+                text = textInformation,
+                style = MaterialTheme.typography.bodyMedium,
+                color = textInformationColor,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp)
+            )
+        }
+    }
+    Text(
+        text = stringResource(R.string.mask_instruction),
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.primary,
+        textAlign = TextAlign.Center,
+        modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp)
+    )
+
+        Text(
+            text = stringResource(R.string.lower_letter) + " - l",
+            color = MaterialTheme.colorScheme.secondary,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp)
+        )
+        Text(
+            text = stringResource(R.string.upper_letters) + " - L",
+            color = MaterialTheme.colorScheme.secondary,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp)
+        )
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = stringResource(R.string.numbers) + " - n",
+            color = MaterialTheme.colorScheme.secondary,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.weight(1f)
+        )
+        Text(
+            text = stringResource(R.string.symbols) + " - s",
+            color = MaterialTheme.colorScheme.secondary,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
+
 @Preview(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES
@@ -346,7 +474,7 @@ fun CheckedSection(
 fun CreateContentPreview(){
     PasswordManagerTheme() {
         CreateContent(
-            uiState = CreateState(),
+            uiState = CreateState().copy(isRandomPassword = false, password = "12345wdwqqd"),
             onSymbolsChange = {},
             onNumbersChange = {},
             onUpperLetterChange = {},
@@ -356,10 +484,13 @@ fun CreateContentPreview(){
             onServiceChange = {},
             onLoginChange = {},
             onSliderChange = {},
-            generatePassword = {},
+            generateRandomPassword = {},
             checkLength = {},
             onSave = {},
             toHome = {},
+            onMaskChange = {},
+            onChangePasswordMethod = {},
+            generateMaskPassword = {}
         )
     }
 }

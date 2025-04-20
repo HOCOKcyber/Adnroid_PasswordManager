@@ -21,12 +21,18 @@
     <string name="domain">Домен</string>
     <string name="domain_placeholder">Ссылка на сервис/сайт</string>
 
-    <string name="password_placeholder">Введите пароль</string>
+    <string name="password_input">Введите пароль</string>
+    <string name="password_mask_input">Введите маску</string>
     <string name="lenght">Длина</string>
     <string name="numbers">Цифры</string>
     <string name="symbols">Символы</string>
     <string name="upper_letters">Заглавные буквы</string>
+    <string name="lower_letter">Строчные буквы</string>
+    <string name="mask_instruction">Инструкции к маске:</string>
     <string name="save">Сохранить</string>
+    <string name="change_password_method">Изменить метод генерации пароля</string>
+    <string name="here_password">Ваш пароль будет тут</string>
+    <string name="mask_error">Неверная маска</string>
 
     <string name="details">Подробности</string>
     <string name="change">Изменить</string>
