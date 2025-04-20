@@ -22,6 +22,7 @@ import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,7 +33,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hocok.passwordmanager.R
 import com.hocok.passwordmanager.domain.model.AccountData
@@ -53,7 +53,7 @@ fun DetailsScreen(
 ){
     val viewModel: DetailsViewModel =
         viewModel<DetailsViewModel>(factory = DetailsViewModel.factory)
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(
         key1 = true,
@@ -127,7 +127,7 @@ fun DetailsContent(
                 clipManager.setClip(clipEntry)
                 Toast.makeText(
                     context,
-                    "Пароль скопирован",
+                    context.getString(R.string.password_copied),
                     Toast.LENGTH_SHORT,
                 ).show()
             },
@@ -168,6 +168,7 @@ fun DetailsSection(
         Text(
             text = name,
             style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.weight(1f),
         )
         Box(
@@ -178,6 +179,7 @@ fun DetailsSection(
                     text = value,
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.secondary,
                     style = MaterialTheme.typography.bodySmall
                 )
             }

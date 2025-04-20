@@ -72,7 +72,7 @@ fun NavigationScreen(){
             }
 
             composable<Routes.Registration> {
-                val information: String = it.toRoute<Routes.Registration>().information
+                val information: Int = it.toRoute<Routes.Registration>().information
                 RegistrationScreen(
                     information = information,
                     toHome = { navController.navigate(Routes.Home){

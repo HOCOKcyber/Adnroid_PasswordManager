@@ -17,7 +17,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,21 +31,20 @@ import com.hocok.passwordmanager.ui.theme.PasswordManagerTheme
 
 @Composable
 fun LoginScreen(
-    toRegistration: (information: String) -> Unit,
+    toRegistration: (information: Int) -> Unit,
     toHome: () -> Unit,
 ){
     val viewModel: LoginViewModel = viewModel(factory = LoginViewModel.factory)
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
 
     LaunchedEffect(true) {
         viewModel.checkFirstTime{
-            toRegistration(context.getString(R.string.create_password))
+            toRegistration(R.string.create_password)
         }
     }
 
     LoginScreenContent(
-        toRegistration = {toRegistration(context.getString(R.string.create_new_password))},
+        toRegistration = {toRegistration(R.string.create_new_password)},
         onSubmit = {viewModel.onEvent(LoginEvent.Submit(toHome))},
         onValueChange = { viewModel.onEvent(LoginEvent.ChangePassword(it)) },
         onVisibleChange = { viewModel.onEvent(LoginEvent.ChangeVisible) },
@@ -72,7 +70,9 @@ fun LoginScreenContent(
         modifier = Modifier.fillMaxSize()
     ) {
         ShowLogo(
-            modifier = Modifier.weight(1f).fillMaxSize()
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxSize()
         )
         AnimatedVisibility(
             isVisible,
@@ -95,11 +95,13 @@ fun LoginScreenContent(
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.secondary,
                     textAlign = TextAlign.End,
-                    modifier = Modifier.padding(top = 10.dp, end = 6.dp)
+                    modifier = Modifier
+                        .padding(top = 10.dp, end = 6.dp)
                         .fillMaxWidth()
                         .clickable(
                             interactionSource = interactionSource,
-                            indication = null) {
+                            indication = null
+                        ) {
                             toRegistration()
                         }
                 )

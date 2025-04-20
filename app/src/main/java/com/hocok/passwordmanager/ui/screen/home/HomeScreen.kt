@@ -178,7 +178,7 @@ fun HomeAccountCard(
                     clipboardManager.setClip(clipEntry)
                     Toast.makeText(
                         context,
-                        "Пароль скопирован",
+                        context.getString(R.string.password_copied),
                         Toast.LENGTH_LONG,
                     ).show()
                 },

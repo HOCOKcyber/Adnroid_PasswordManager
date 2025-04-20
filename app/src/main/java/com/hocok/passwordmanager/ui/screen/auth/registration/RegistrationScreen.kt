@@ -2,6 +2,7 @@ package com.hocok.passwordmanager.ui.screen.auth.registration
 
 import android.content.res.Configuration
 import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -23,7 +24,7 @@ import com.hocok.passwordmanager.ui.theme.PasswordManagerTheme
 @Composable
 fun RegistrationScreen(
     toHome : () -> Unit,
-    information: String = stringResource(R.string.create_password)
+    @StringRes information: Int = R.string.create_password
 ){
     val viewModel = viewModel<RegistrationViewModel>(factory = RegistrationViewModel.factory)
     val uiState by viewModel.uiState.collectAsState()
@@ -37,7 +38,7 @@ fun RegistrationScreen(
         onRepeatVisibleChange = {viewModel.onEvent(RegistrationEvent.RepeatVisibleChange)},
         information = information,
         onSubmit = {
-            if (uiState.password.length < 8) Toast.makeText(context, "Пароль должен быть не менее 8 символов",Toast.LENGTH_SHORT).show()
+            if (uiState.password.length < 8) Toast.makeText(context, context.getString(R.string.at_least_password),Toast.LENGTH_SHORT).show()
             else viewModel.onEvent(RegistrationEvent.Submit(toHome))
                    },
     )
@@ -52,7 +53,7 @@ fun RegistrationScreenContent(
     onRepeatValueChange: (String) -> Unit,
     onFirstVisibleChange: () -> Unit,
     onRepeatVisibleChange: () -> Unit,
-    information: String,
+    @StringRes information: Int,
 ){
     Column(
         modifier = Modifier.fillMaxSize()
@@ -63,7 +64,7 @@ fun RegistrationScreenContent(
         AuthContent(
             onContinueButton = onSubmit,
             title = R.string.registration,
-            information = information,
+            information = stringResource(information),
             modifier = Modifier.weight(2f)
         ){
             PasswordTextField(
@@ -109,7 +110,7 @@ fun RegistrationScreenPreview(){
             onFirstVisibleChange = {},
             onRepeatValueChange = {},
             onRepeatVisibleChange = {},
-            information = stringResource(R.string.create_password)
+            information = R.string.create_password
         )
     }
 }

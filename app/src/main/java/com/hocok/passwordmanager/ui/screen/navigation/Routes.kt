@@ -1,5 +1,6 @@
 package com.hocok.passwordmanager.ui.screen.navigation
 
+import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Search
@@ -12,7 +13,7 @@ sealed class Routes{
     data object Login: Routes()
 
     @Serializable
-    data class Registration(val information: String): Routes()
+    data class Registration(@StringRes val information: Int): Routes()
 
     @Serializable
     data object Home: Routes()

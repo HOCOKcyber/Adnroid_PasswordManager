@@ -82,16 +82,21 @@ dependencies {
 
 
     // DataStore
-    implementation("androidx.datastore:datastore-preferences:1.1.4")
+    val data_store_version = "1.1.4"
+    implementation("androidx.datastore:datastore-preferences:$data_store_version")
 
     // Coil
-    implementation("io.coil-kt.coil3:coil-compose:3.1.0")
-    implementation("io.coil-kt.coil3:coil-network-okhttp:3.1.0")
+    val coil_version = "3.1.0"
+    implementation("io.coil-kt.coil3:coil-compose:$coil_version")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:$coil_version")
 
 //    Room
     val room_version = "2.7.0"
     implementation("androidx.room:room-runtime:$room_version")
     ksp("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
+
+    val appcompat_version = "1.7.0"
+    implementation("androidx.appcompat:appcompat:$appcompat_version")
 
 }

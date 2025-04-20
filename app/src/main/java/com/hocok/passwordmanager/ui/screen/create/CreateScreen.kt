@@ -26,12 +26,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -41,7 +44,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hocok.passwordmanager.R
 import com.hocok.passwordmanager.ui.component.StyleButton
@@ -55,7 +57,7 @@ fun CreateScreen(
     id: Int? = null,
 ){
     val viewModel: CreateViewModel = viewModel<CreateViewModel>(factory = CreateViewModel.factory)
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsState()
 
     if (id != null) LaunchedEffect(key1 = true) { viewModel.fetchAccount(id)}
 
@@ -157,7 +159,7 @@ fun CreateContent(
                         uiState.login.isEmpty() ||
                         uiState.password.isEmpty() ||
                         uiState.service.isEmpty()) {
-                         Toast.makeText(context, "Заполните все поля", Toast.LENGTH_SHORT).show()
+                         Toast.makeText(context, context.getString(R.string.fill_all_input), Toast.LENGTH_SHORT).show()
                     } else {
                         onSave()
                         toHome()
@@ -187,6 +189,7 @@ fun AccountDataInputSection(
             text = name,
             style = MaterialTheme.typography.bodyMedium,
             fontSize = 18.sp,
+            color = MaterialTheme.colorScheme.primary,
             textAlign = if (isLeadingIcon) TextAlign.Start else TextAlign.Center,
             modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp)
         )
@@ -198,7 +201,8 @@ fun AccountDataInputSection(
             placeholder = {
                 Text(
                     text = placeholder,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.secondary
                 )
             },
             textStyle = MaterialTheme.typography.bodySmall,
@@ -208,7 +212,12 @@ fun AccountDataInputSection(
             trailingIcon = if (!isLeadingIcon) { ->
                         IconButton(onClick = onClick)
                         { Icon(painterResource(iconId), contentDescription = name) }
-                        } else null
+                        } else null,
+            colors = TextFieldDefaults.colors(
+                unfocusedContainerColor = Color.Transparent,
+                focusedIndicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                focusedContainerColor = Color.Transparent,
+            )
         )
     }
 }
@@ -237,6 +246,7 @@ fun ParametersSection(
                 text = stringResource(R.string.lenght),
                 style = MaterialTheme.typography.bodyMedium,
                 fontSize = 18.sp,
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(end = 10.dp)
             )
             BasicTextField(
@@ -310,7 +320,8 @@ fun CheckedSection(
             text = name,
             modifier = Modifier.padding(end = 10.dp),
             style = MaterialTheme.typography.bodyMedium,
-            fontSize = 18.sp
+            fontSize = 18.sp,
+            color = MaterialTheme.colorScheme.primary
         )
         Checkbox(
             checked = value,

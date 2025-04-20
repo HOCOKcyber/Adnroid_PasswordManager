@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">PasswordManager</string>
 
-
     <string name="welcome">Вход</string>
     <string name="password">Пароль</string>
     <string name="forgot_password">Не помню пароль</string>
@@ -38,6 +37,9 @@
     <string name="add_password">Добавить аккаунт</string>
     <string name="change_password">Изменить аккаунт</string>
 
-    <string name="all">Все</string>
-    <string name="empty">Пусто</string>
+    <string name="empty">Пусто :(</string>
+    <string name="change_language">Изменить язык</string>
+    <string name="at_least_password">Пароль должен быть не менее 8 символов</string>
+    <string name="fill_all_input">Заполните все поля</string>
+    <string name="password_copied">Пароль скопирован</string>
 </resources>

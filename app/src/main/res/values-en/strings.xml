@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PasswordManager</string>
+
+    <string name="welcome">Welcome</string>
+    <string name="password">Password</string>
+    <string name="forgot_password">Forgot password</string>
+    <string name="continue_text">Continue</string>
+    <string name="password_repeat">Repeat password</string>
+    <string name="registration">Sign up</string>
+    <string name="create_password">Create a password to log in to the app</string>
+    <string name="create_new_password">When creating a new password, the data will be lost*</string>
+
+    <string name="copy">Copy</string>
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+
+    <string name="service">Service</string>
+    <string name="service_placeholder">Service name</string>
+    <string name="login">Login</string>
+    <string name="login_placeholder">Enter login</string>
+    <string name="domain">Domain</string>
+    <string name="domain_placeholder">Link to the service/website</string>
+
+    <string name="password_placeholder">Enter password</string>
+    <string name="lenght">Length</string>
+    <string name="numbers">Numbers</string>
+    <string name="symbols">Symbols</string>
+    <string name="upper_letters">Uppercase letters</string>
+    <string name="save">Save</string>
+
+    <string name="details">Details</string>
+    <string name="change">Change</string>
+    <string name="share">Share</string>
+
+    <string name="back">Back</string>
+    <string name="delete">Delete</string>
+    <string name="add_password">Create account</string>
+    <string name="change_password">Change account</string>
+
+    <string name="empty">Empty :(</string>
+    <string name="change_language">Change language</string>
+    <string name="at_least_password">The password must be at least 8 characters long</string>
+    <string name="fill_all_input">Fill in all the fields</string>
+    <string name="password_copied">Password has been copied</string>
+</resources>
